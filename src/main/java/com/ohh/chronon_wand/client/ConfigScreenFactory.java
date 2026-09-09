@@ -31,12 +31,12 @@ public class ConfigScreenFactory {
                 .build());
 
         general.addEntry(entryBuilder.startIntList(Component.translatable("option.chronon_wand.speed_tiers"), ChrononWandConfig.DATA.speedTiers)
-                .setDefaultValue(java.util.Arrays.asList(2, 4, 8, 16, 32))
+                .setDefaultValue(java.util.Arrays.asList(2, 4, 16, 64, 128, 256))
                 .setSaveConsumer(newValue -> ChrononWandConfig.DATA.speedTiers = newValue)
                 .build());
 
         general.addEntry(entryBuilder.startIntList(Component.translatable("option.chronon_wand.cost_per_second"), ChrononWandConfig.DATA.costPerSecond)
-                .setDefaultValue(java.util.Arrays.asList(10, 20, 40, 80, 160))
+                .setDefaultValue(java.util.Arrays.asList(10, 15, 30, 50, 75, 100))
                 .setSaveConsumer(newValue -> ChrononWandConfig.DATA.costPerSecond = newValue)
                 .build());
 

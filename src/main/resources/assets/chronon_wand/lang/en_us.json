@@ -9,7 +9,5 @@
   "option.chronon_wand.max_chronons": "Max Chronons",
   "option.chronon_wand.max_duration_ticks": "Max Duration (Ticks)",
   "option.chronon_wand.speed_tiers": "Speed Tiers",
-  "option.chronon_wand.cost_per_second": "Cost Per Second",
-  "block.chronon_wand.example_block": "Example Block",
-  "block.custommod.example_block": "Example Block"
+  "option.chronon_wand.cost_per_second": "Cost Per Second"
 }

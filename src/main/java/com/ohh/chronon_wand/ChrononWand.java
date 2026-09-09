@@ -12,7 +12,6 @@ public class ChrononWand {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public ChrononWand(IEventBus modEventBus) {
-        ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.register(modEventBus);

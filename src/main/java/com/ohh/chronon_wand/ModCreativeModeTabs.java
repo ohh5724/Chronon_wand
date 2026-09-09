@@ -12,14 +12,13 @@ public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ChrononWand.MOD_ID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB =
-            CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.custommod"))
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CHRONON_WAND_TAB =
+            CREATIVE_MODE_TABS.register("chronon_wand_tab", () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.chronon_wand"))
                     .withTabsBefore(CreativeModeTabs.COMBAT)
                     .icon(() -> ModItems.CHRONON_WAND.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.CHRONON_WAND.get());
-                        output.accept(ModBlocks.EXAMPLE_BLOCK_ITEM.get());
                     })
                     .build());
 
