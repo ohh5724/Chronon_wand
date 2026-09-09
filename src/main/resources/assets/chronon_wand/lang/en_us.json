@@ -1,0 +1,13 @@
+{
+  "itemGroup.chronon_wand": "Example Mod Tab",
+  "block.chronon_wand.example_block": "Example Block",
+  "item.chronon_wand.example_item": "Example Item",
+
+  "chronon_wand.configuration.title": "Chronon Wand Configs",
+  "chronon_wand.configuration.section.chronon_wand.common.toml": "Chronon Wand Configs",
+  "chronon_wand.configuration.section.chronon_wand.common.toml.title": "Chronon Wand Configs",
+  "chronon_wand.configuration.items": "Item List",
+  "chronon_wand.configuration.logDirtBlock": "Log Dirt Block",
+  "chronon_wand.configuration.magicNumberIntroduction": "Magic Number Text",
+  "chronon_wand.configuration.magicNumber": "Magic Number"
+}
