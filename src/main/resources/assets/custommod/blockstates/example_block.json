@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "custommod:block/example_block"
+    }
+  }
+}
+
