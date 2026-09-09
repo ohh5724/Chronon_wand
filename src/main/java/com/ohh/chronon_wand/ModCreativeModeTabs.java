@@ -16,9 +16,9 @@ public class ModCreativeModeTabs {
             CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.custommod"))
                     .withTabsBefore(CreativeModeTabs.COMBAT)
-                    .icon(() -> ModItems.EXAMPLE_ITEM.get().getDefaultInstance())
+                    .icon(() -> ModItems.CHRONON_WAND.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
-                        output.accept(ModItems.EXAMPLE_ITEM.get());
+                        output.accept(ModItems.CHRONON_WAND.get());
                         output.accept(ModBlocks.EXAMPLE_BLOCK_ITEM.get());
                     })
                     .build());

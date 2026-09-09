@@ -1,8 +1,15 @@
 {
+  "item.chronon_wand.chronon_wand": "Chronon Wand",
   "itemGroup.chronon_wand": "Chronon Wand",
-  "itemGroup.custommod": "Custom Mod",
-  "item.chronon_wand.example_item": "Example Item",
-  "item.custommod.example_item": "Example Item",
+  "message.chronon_wand.stopped": "Acceleration stopped.",
+  "message.chronon_wand.not_enough_chronons": "Not enough Chronons!",
+  "message.chronon_wand.accelerated": "Block accelerated to %dx speed.",
+  "title.chronon_wand.config": "Chronon Wand Config",
+  "category.chronon_wand.general": "General",
+  "option.chronon_wand.max_chronons": "Max Chronons",
+  "option.chronon_wand.max_duration_ticks": "Max Duration (Ticks)",
+  "option.chronon_wand.speed_tiers": "Speed Tiers",
+  "option.chronon_wand.cost_per_second": "Cost Per Second",
   "block.chronon_wand.example_block": "Example Block",
   "block.custommod.example_block": "Example Block"
 }

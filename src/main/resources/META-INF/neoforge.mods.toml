@@ -55,3 +55,10 @@ Custom Mod description.
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.custommod]]
+    modId="tempad"
+    type="required"
+    versionRange="[3.0.4,)"
+    ordering="AFTER"
+    side="BOTH"
+

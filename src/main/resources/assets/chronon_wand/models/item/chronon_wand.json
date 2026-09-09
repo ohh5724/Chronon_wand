@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "chronon_wand:item/example_item"
+    "layer0": "chronon_wand:item/chronon_wand"
   }
 }
 
