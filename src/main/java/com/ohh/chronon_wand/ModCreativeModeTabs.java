@@ -19,6 +19,7 @@ public class ModCreativeModeTabs {
                     .icon(() -> ModItems.CHRONON_WAND.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.CHRONON_WAND.get());
+                        output.accept(ModBlocks.METRONOME_PORT_ITEM.get());
                     })
                     .build());
 

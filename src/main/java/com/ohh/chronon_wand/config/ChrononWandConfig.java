@@ -19,8 +19,8 @@ public class ChrononWandConfig {
 
     public static class ConfigData {
         public int maxChronons = 10000;
-        public List<Integer> speedTiers = Arrays.asList(2, 4, 8, 16, 32);
-        public List<Integer> costPerSecond = Arrays.asList(10, 20, 40, 80, 160);
+        public List<Integer> speedTiers = Arrays.asList(2, 4, 16, 64, 128, 256);
+        public List<Integer> costPerSecond = Arrays.asList(10, 15, 30, 50, 75, 100);
         public int maxDurationTicks = 600; // 30 seconds
     }
 

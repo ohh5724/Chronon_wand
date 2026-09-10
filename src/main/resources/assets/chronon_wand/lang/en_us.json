@@ -1,7 +1,7 @@
 {
   "item.chronon_wand.chronon_wand": "Chronon Wand",
   "itemGroup.chronon_wand": "Chronon Wand",
-  "message.chronon_wand.stopped": "Acceleration stopped.",
+  "message.chronon_wand.max_speed": "Block is already at maximum acceleration.",
   "message.chronon_wand.not_enough_chronons": "Not enough Chronons!",
   "message.chronon_wand.accelerated": "Block accelerated to %dx speed.",
   "title.chronon_wand.config": "Chronon Wand Config",
@@ -9,5 +9,7 @@
   "option.chronon_wand.max_chronons": "Max Chronons",
   "option.chronon_wand.max_duration_ticks": "Max Duration (Ticks)",
   "option.chronon_wand.speed_tiers": "Speed Tiers",
-  "option.chronon_wand.cost_per_second": "Cost Per Second"
+  "option.chronon_wand.cost_per_second": "Cost Per Second",
+  "block.chronon_wand.metronome_port": "Metronome Port",
+  "fluid_type.chronon_wand.chronon_fluid": "Chronon Fluid"
 }

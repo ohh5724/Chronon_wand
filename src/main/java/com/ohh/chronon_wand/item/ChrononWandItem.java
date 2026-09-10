@@ -53,17 +53,24 @@ public class ChrononWandItem extends Item {
         if (accelerator != null) {
             int rate = accelerator.getTimeRate();
             currentTierIndex = speeds.indexOf(rate);
+            if (currentTierIndex == -1) {
+                for (int i = 0; i < speeds.size(); i++) {
+                    if (speeds.get(i) >= rate) {
+                        currentTierIndex = i;
+                        break;
+                    }
+                }
+            }
+            if (currentTierIndex >= speeds.size() - 1) {
+                player.displayClientMessage(Component.translatable("message.chronon_wand.max_speed"), true);
+                return InteractionResult.FAIL;
+            }
         }
 
         int nextTierIndex = currentTierIndex + 1;
         if (nextTierIndex >= speeds.size()) {
-            nextTierIndex = 0; // Wrap around or just do nothing? Let's just wrap around or maybe stop?
-            // If they click again at max tier, we can reset it, or just do nothing. Let's just reset to tier 1.
-            if (accelerator != null) {
-                accelerator.discard();
-                player.displayClientMessage(Component.translatable("message.chronon_wand.stopped"), true);
-                return InteractionResult.SUCCESS;
-            }
+            player.displayClientMessage(Component.translatable("message.chronon_wand.max_speed"), true);
+            return InteractionResult.FAIL;
         }
 
         int nextRate = speeds.get(nextTierIndex);

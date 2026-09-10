@@ -18,6 +18,29 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.ACCELERATOR.get(), InvisibleRenderer::new);
     }
 
+    @SubscribeEvent
+    public static void onRegisterClientExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+            private static final ResourceLocation FLOWING = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+            @Override
+            public ResourceLocation getStillTexture() {
+                return STILL;
+            }
+
+            @Override
+            public ResourceLocation getFlowingTexture() {
+                return FLOWING;
+            }
+
+            @Override
+            public int getTintColor() {
+                return 0xFFFFA020;
+            }
+        }, com.ohh.chronon_wand.fluid.ModFluids.CHRONON_FLUID_TYPE.get());
+    }
+
     private static class InvisibleRenderer extends EntityRenderer<com.ohh.chronon_wand.entity.AcceleratorEntity> {
         public InvisibleRenderer(EntityRendererProvider.Context context) {
             super(context);

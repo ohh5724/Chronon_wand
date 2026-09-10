@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "chronon_wand:block/metronome_port"
+    }
+  }
+}
+

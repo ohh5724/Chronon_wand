@@ -39,3 +39,6 @@ run/
 repo/
 !**/src/**/repo/
 Chronon_wand.code-workspace
+
+### Gimp Output ###
+*.xcf
