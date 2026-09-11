@@ -2,10 +2,14 @@ package com.ohh.chronon_wand.block;
 
 import com.mojang.serialization.MapCodec;
 import com.ohh.chronon_wand.block.entity.MetronomePortBlockEntity;
+import com.ohh.chronon_wand.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +20,14 @@ public class MetronomePortBlock extends BaseEntityBlock {
 
     public MetronomePortBlock(BlockBehaviour.Properties properties) {
         super(properties);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level,
+                                                                 @NotNull BlockState state,
+                                                                 @NotNull BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, ModBlockEntities.METRONOME_PORT.get(), MetronomePortBlockEntity::serverTick);
     }
 
     @Override

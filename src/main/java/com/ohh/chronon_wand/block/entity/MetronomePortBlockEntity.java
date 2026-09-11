@@ -7,6 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -24,6 +26,9 @@ import java.util.Map;
 
 public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandler, ChrononHandler {
     public static final int BUFFER_CAPACITY = 6000;
+
+    private int lastKnownChronons = -1;
+    private int lastKnownFluid = -1;
 
     private final Map<Direction, SideMode> energySideModes = new EnumMap<>(Direction.class);
     private final Map<Direction, SideMode> fluidSideModes = new EnumMap<>(Direction.class);
@@ -220,19 +225,17 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     public @NotNull FluidStack getFluidInTank(int tank) {
         ChrononHandler metronome = findConnectedMetronome();
-        int bufferAmount = this.buffer.getFluidAmount();
-        int metronomeAmount = metronome != null ? metronome.getPower() : 0;
-        int totalDisplay = Math.min(BUFFER_CAPACITY, bufferAmount + metronomeAmount);
-
-        if (totalDisplay > 0) {
-            return new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), totalDisplay);
+        int amount = (metronome != null) ? metronome.getPower() : this.buffer.getFluidAmount();
+        if (amount > 0) {
+            return new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), amount);
         }
         return FluidStack.EMPTY;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return BUFFER_CAPACITY;
+        ChrononHandler metronome = findConnectedMetronome();
+        return (metronome != null) ? metronome.getMaxPower() : this.buffer.getCapacity();
     }
 
     @Override
@@ -247,28 +250,38 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
             return 0;
         }
 
-        int toFill = resource.getAmount();
         ChrononHandler metronome = findConnectedMetronome();
-
-        // If connected to a Metronome, insert into the metronome first
-        int insertedIntoMetronome = 0;
         if (metronome != null) {
+            int toFill = resource.getAmount();
             ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
-            insertedIntoMetronome = metronome.insert(toFill, actionType);
+            int inserted = metronome.insert(toFill, actionType);
+            if (action.execute() && inserted > 0) {
+                int newPower = metronome.getPower();
+                if (newPower > 0) {
+                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
+                } else {
+                    this.buffer.setFluid(FluidStack.EMPTY);
+                }
+                this.lastKnownChronons = newPower;
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return inserted;
+        } else {
+            int filled = this.buffer.fill(resource, action);
+            if (action.execute() && filled > 0) {
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                this.lastKnownChronons = this.lastKnownFluid;
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return filled;
         }
-
-        int remaining = toFill - insertedIntoMetronome;
-        int filledIntoBuffer = 0;
-        if (remaining > 0) {
-            FluidStack remainingStack = resource.copyWithAmount(remaining);
-            filledIntoBuffer = this.buffer.fill(remainingStack, action);
-        }
-
-        if (action.execute()) {
-            setChanged();
-        }
-
-        return insertedIntoMetronome + filledIntoBuffer;
     }
 
     @Override
@@ -285,34 +298,40 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
             return FluidStack.EMPTY;
         }
 
-        int drainedFromBuffer = 0;
-        // First try to drain from the internal buffer
-        if (!this.buffer.isEmpty()) {
-            FluidStack drainedStack = this.buffer.drain(maxDrain, action);
-            drainedFromBuffer = drainedStack.getAmount();
-        }
-
-        int remainingNeeded = maxDrain - drainedFromBuffer;
-        int extractedFromMetronome = 0;
-
-        // If more is needed, extract chronons from connected metronome (1 Chronon = 1 mB)
-        if (remainingNeeded > 0) {
-            ChrononHandler metronome = findConnectedMetronome();
-            if (metronome != null) {
-                ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
-                extractedFromMetronome = metronome.extract(remainingNeeded, actionType);
+        ChrononHandler metronome = findConnectedMetronome();
+        if (metronome != null) {
+            ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
+            int extracted = metronome.extract(maxDrain, actionType);
+            if (extracted <= 0) {
+                return FluidStack.EMPTY;
             }
-        }
-
-        int totalDrained = drainedFromBuffer + extractedFromMetronome;
-        if (totalDrained > 0) {
             if (action.execute()) {
+                int newPower = metronome.getPower();
+                if (newPower > 0) {
+                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
+                } else {
+                    this.buffer.setFluid(FluidStack.EMPTY);
+                }
+                this.lastKnownChronons = newPower;
+                this.lastKnownFluid = this.buffer.getFluidAmount();
                 setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
             }
-            return new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), totalDrained);
+            return new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), extracted);
+        } else {
+            FluidStack drained = this.buffer.drain(maxDrain, action);
+            if (action.execute() && !drained.isEmpty()) {
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                this.lastKnownChronons = this.lastKnownFluid;
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return drained;
         }
-
-        return FluidStack.EMPTY;
     }
 
     // ChrononHandler implementation
@@ -320,16 +339,13 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     public int getPower() {
         ChrononHandler metronome = findConnectedMetronome();
-        int bufferAmount = this.buffer.getFluidAmount();
-        int metronomeAmount = metronome != null ? metronome.getPower() : 0;
-        return bufferAmount + metronomeAmount;
+        return (metronome != null) ? metronome.getPower() : this.buffer.getFluidAmount();
     }
 
     @Override
     public int getMaxPower() {
         ChrononHandler metronome = findConnectedMetronome();
-        int metronomeMax = metronome != null ? metronome.getMaxPower() : 0;
-        return BUFFER_CAPACITY + metronomeMax;
+        return (metronome != null) ? metronome.getMaxPower() : this.buffer.getCapacity();
     }
 
     @Override
@@ -348,25 +364,37 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
             return 0;
         }
         ChrononHandler metronome = findConnectedMetronome();
-
-        int insertedIntoMetronome = 0;
         if (metronome != null) {
-            insertedIntoMetronome = metronome.insert(amount, action);
-        }
-
-        int remaining = amount - insertedIntoMetronome;
-        int filledIntoBuffer = 0;
-        if (remaining > 0) {
-            FluidStack fluid = new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), remaining);
+            int inserted = metronome.insert(amount, action);
+            if (action == ActionType.Execute && inserted > 0) {
+                int newPower = metronome.getPower();
+                if (newPower > 0) {
+                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
+                } else {
+                    this.buffer.setFluid(FluidStack.EMPTY);
+                }
+                this.lastKnownChronons = newPower;
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return inserted;
+        } else {
             FluidAction fluidAction = (action == ActionType.Execute) ? FluidAction.EXECUTE : FluidAction.SIMULATE;
-            filledIntoBuffer = this.buffer.fill(fluid, fluidAction);
+            FluidStack fluid = new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), amount);
+            int filled = this.buffer.fill(fluid, fluidAction);
+            if (action == ActionType.Execute && filled > 0) {
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                this.lastKnownChronons = this.lastKnownFluid;
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return filled;
         }
-
-        if (action == ActionType.Execute && (insertedIntoMetronome > 0 || filledIntoBuffer > 0)) {
-            setChanged();
-        }
-
-        return insertedIntoMetronome + filledIntoBuffer;
     }
 
     @Override
@@ -374,29 +402,114 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         if (maxDrain <= 0) {
             return 0;
         }
-
-        int drainedFromBuffer = 0;
-        if (!this.buffer.isEmpty()) {
+        ChrononHandler metronome = findConnectedMetronome();
+        if (metronome != null) {
+            int extracted = metronome.extract(maxDrain, action);
+            if (action == ActionType.Execute && extracted > 0) {
+                int newPower = metronome.getPower();
+                if (newPower > 0) {
+                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
+                } else {
+                    this.buffer.setFluid(FluidStack.EMPTY);
+                }
+                this.lastKnownChronons = newPower;
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return extracted;
+        } else {
             FluidAction fluidAction = (action == ActionType.Execute) ? FluidAction.EXECUTE : FluidAction.SIMULATE;
             FluidStack drained = this.buffer.drain(maxDrain, fluidAction);
-            drainedFromBuffer = drained.getAmount();
+            if (action == ActionType.Execute && !drained.isEmpty()) {
+                this.lastKnownFluid = this.buffer.getFluidAmount();
+                this.lastKnownChronons = this.lastKnownFluid;
+                setChanged();
+                if (this.level != null && !this.level.isClientSide) {
+                    this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+                }
+            }
+            return drained.getAmount();
+        }
+    }
+
+    public static void serverTick(Level level, BlockPos pos, BlockState state, MetronomePortBlockEntity port) {
+        ChrononHandler metronome = port.findConnectedMetronome();
+
+        int targetCapacity = (metronome != null) ? metronome.getMaxPower() : BUFFER_CAPACITY;
+        if (port.buffer.getCapacity() != targetCapacity) {
+            port.buffer.setCapacity(targetCapacity);
+            port.setChanged();
         }
 
-        int remainingNeeded = maxDrain - drainedFromBuffer;
-        int extractedFromMetronome = 0;
-        if (remainingNeeded > 0) {
-            ChrononHandler metronome = findConnectedMetronome();
-            if (metronome != null) {
-                extractedFromMetronome = metronome.extract(remainingNeeded, action);
+        if (metronome != null) {
+            int currentChronons = metronome.getPower();
+            int currentFluid = port.buffer.getFluidAmount();
+
+            if (port.lastKnownChronons == -1) {
+                if (currentChronons > 0) {
+                    port.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), currentChronons));
+                } else {
+                    port.buffer.setFluid(FluidStack.EMPTY);
+                }
+                port.lastKnownChronons = currentChronons;
+                port.lastKnownFluid = port.buffer.getFluidAmount();
+                port.setChanged();
+                level.sendBlockUpdated(pos, state, state, 2);
+                return;
+            }
+
+            if (currentChronons != port.lastKnownChronons) {
+                if (currentChronons > 0) {
+                    port.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), currentChronons));
+                } else {
+                    port.buffer.setFluid(FluidStack.EMPTY);
+                }
+                port.lastKnownChronons = currentChronons;
+                port.lastKnownFluid = port.buffer.getFluidAmount();
+                port.setChanged();
+                level.sendBlockUpdated(pos, state, state, 2);
+            } else if (currentFluid != port.lastKnownFluid) {
+                int diff = currentFluid - currentChronons;
+                if (diff > 0) {
+                    metronome.insert(diff, ActionType.Execute);
+                } else if (diff < 0) {
+                    metronome.extract(-diff, ActionType.Execute);
+                }
+                int finalPower = metronome.getPower();
+                if (finalPower > 0) {
+                    port.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), finalPower));
+                } else {
+                    port.buffer.setFluid(FluidStack.EMPTY);
+                }
+                port.lastKnownChronons = finalPower;
+                port.lastKnownFluid = port.buffer.getFluidAmount();
+                port.setChanged();
+                level.sendBlockUpdated(pos, state, state, 2);
+            }
+        } else {
+            int currentFluid = port.buffer.getFluidAmount();
+            if (currentFluid != port.lastKnownFluid || port.lastKnownChronons != currentFluid) {
+                port.lastKnownFluid = currentFluid;
+                port.lastKnownChronons = currentFluid;
+                port.setChanged();
+                level.sendBlockUpdated(pos, state, state, 2);
             }
         }
+    }
 
-        int total = drainedFromBuffer + extractedFromMetronome;
-        if (action == ActionType.Execute && total > 0) {
-            setChanged();
-        }
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
+        return tag;
+    }
 
-        return total;
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }
 
