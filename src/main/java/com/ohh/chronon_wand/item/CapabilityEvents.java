@@ -16,6 +16,7 @@ public class CapabilityEvents {
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerItem(ChrononHandler.Capabilities.getItem(), (stack, ctx) -> new ItemChrononHandler(stack), ModItems.CHRONON_WAND.get());
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.METRONOME_PORT.get(), (be, side) -> be);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.METRONOME_PORT.get(), (be, side) -> be.getFluidHandler(side));
+        event.registerBlockEntity(ChrononHandler.Capabilities.getBlock(), ModBlockEntities.METRONOME_PORT.get(), (be, side) -> be.getChrononHandler(side));
     }
 }

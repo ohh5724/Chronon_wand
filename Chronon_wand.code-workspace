@@ -5,10 +5,16 @@
 		},
 		{
 			"path": "../../../JARs/tempad-1.21.1-3.0.4-all"
+		},
+		{
+			"path": "../../../JARs/justdirethings-1.5.7"
+		},
+		{
+			"path": "../../../JARs/sable-neoforge-1.21.1-2.0.5"
 		}
 	],
 	"settings": {
-		"java.configuration.updateBuildConfiguration": "interactive",
+		"java.configuration.updateBuildConfiguration": "automatic",
 		"java.compile.nullAnalysis.mode": "disabled"
 	}
 }

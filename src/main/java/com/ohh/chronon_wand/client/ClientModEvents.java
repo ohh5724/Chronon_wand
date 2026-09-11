@@ -19,6 +19,11 @@ public class ClientModEvents {
     }
 
     @SubscribeEvent
+    public static void onRegisterScreens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {
+        event.register(com.ohh.chronon_wand.menu.ModMenus.METRONOME_PORT_MENU.get(), com.ohh.chronon_wand.client.screen.MetronomePortScreen::new);
+    }
+
+    @SubscribeEvent
     public static void onRegisterClientExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
         event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
@@ -44,6 +49,11 @@ public class ClientModEvents {
     private static class InvisibleRenderer extends EntityRenderer<com.ohh.chronon_wand.entity.AcceleratorEntity> {
         public InvisibleRenderer(EntityRendererProvider.Context context) {
             super(context);
+        }
+
+        @Override
+        public boolean shouldRender(com.ohh.chronon_wand.entity.AcceleratorEntity entity, net.minecraft.client.renderer.culling.Frustum frustum, double camX, double camY, double camZ) {
+            return false;
         }
 
         @Override

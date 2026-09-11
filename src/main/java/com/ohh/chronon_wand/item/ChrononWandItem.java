@@ -31,6 +31,10 @@ public class ChrononWandItem extends Item {
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
 
+        if (level.getBlockState(pos).is(com.ohh.chronon_wand.ModBlocks.METRONOME_PORT.get())) {
+            return InteractionResult.PASS;
+        }
+
         if (level.isClientSide || player == null) {
             return InteractionResult.SUCCESS;
         }

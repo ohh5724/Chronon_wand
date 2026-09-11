@@ -19,5 +19,6 @@ public class ChrononWand {
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.register(modEventBus);
         com.ohh.chronon_wand.entity.ModEntities.register(modEventBus);
+        com.ohh.chronon_wand.menu.ModMenus.register(modEventBus);
     }
 }

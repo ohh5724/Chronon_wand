@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -84,24 +83,32 @@ public class AcceleratorEntity extends Entity {
         BlockPos pos = this.blockPosition();
         BlockState state = this.level().getBlockState(pos);
 
+        if (state.isAir()) {
+            this.discard();
+            return;
+        }
+
         for (int i = 0; i < rate - 1; i++) {
             if (state.isRandomlyTicking()) {
-                if (this.level().random.nextInt(4096 / (rate + 1)) == 0) { // Rough approximation to match standard random ticks
+                if (this.level().random.nextInt(1365) == 0) {
                     state.randomTick((ServerLevel) this.level(), pos, this.level().random);
                 }
             }
 
-            if (state.getBlock() instanceof EntityBlock) {
-                BlockEntity be = this.level().getBlockEntity(pos);
-                if (be != null) {
-                    @SuppressWarnings("unchecked")
-                    BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) state.getTicker(this.level(), be.getType());
-                    if (ticker != null) {
-                        ticker.tick(this.level(), pos, state, be);
-                    }
+            BlockEntity be = this.level().getBlockEntity(pos);
+            if (be != null && !be.isRemoved()) {
+                @SuppressWarnings("unchecked")
+                BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) state.getTicker(this.level(), be.getType());
+                if (ticker != null) {
+                    ticker.tick(this.level(), pos, be.getBlockState(), be);
                 }
             }
         }
+    }
+
+    @Override
+    public net.minecraft.world.level.material.PushReaction getPistonPushReaction() {
+        return net.minecraft.world.level.material.PushReaction.IGNORE;
     }
 }
 

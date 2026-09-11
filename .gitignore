@@ -38,7 +38,8 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
-Chronon_wand.code-workspace
+*.code-workspace
 
 ### Gimp Output ###
 *.xcf
+gimp_output/

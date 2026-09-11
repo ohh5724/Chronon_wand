@@ -13,9 +13,8 @@ public class ModEntities {
 
     public static final Supplier<EntityType<AcceleratorEntity>> ACCELERATOR = ENTITY_TYPES.register("accelerator", () ->
             EntityType.Builder.<AcceleratorEntity>of(AcceleratorEntity::new, MobCategory.MISC)
-                    .sized(0.1f, 0.1f)
-                    .clientTrackingRange(4)
-                    .updateInterval(20)
+                    .sized(0.0f, 0.0f)
+                    .clientTrackingRange(0)
                     .build("accelerator")
     );
 
