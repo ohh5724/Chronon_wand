@@ -1,6 +1,5 @@
 package com.ohh.chronon_wand;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -24,8 +23,20 @@ public class ChrononWandClient {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
-        ChrononWand.LOGGER.info("HELLO FROM CLIENT SETUP");
-        ChrononWand.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        event.enqueueWork(() -> {
+            if (net.neoforged.fml.ModList.get().isLoaded("ae2")) {
+                com.ohh.chronon_wand.compat.ae2.AE2Compat.initClient();
+            }
+        });
+    }
+
+    @SubscribeEvent
+    static void registerItemColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> {
+            if (tintIndex == 1) {
+                return com.ohh.chronon_wand.compat.ae2.AE2Compat.getCellLedColor(stack);
+            }
+            return 0xFFFFFF;
+        }, ModItems.CHRONON_CELL_4K.get());
     }
 }

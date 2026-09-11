@@ -122,7 +122,8 @@ dependencies {
         "resourcefullib-*.jar",
         "resourcefulconfig-*.jar",
         "kotlinforforge-*.jar",
-        "architectury-*.jar"
+        "architectury-*.jar",
+        "appliedenergistics2-*.jar"
     ])
 }
 

@@ -18,15 +18,19 @@ import org.jetbrains.annotations.NotNull;
 
 import com.ohh.chronon_wand.block.PortChannel;
 import com.ohh.chronon_wand.block.SideMode;
+import earth.terrarium.tempad.api.tva_device.impl.MultiversalChrononHandler;
+import earth.terrarium.tempad.common.block.MetronomeBe;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandler, ChrononHandler {
     public static final int BUFFER_CAPACITY = 6000;
 
+    private UUID owner;
     private int lastKnownChronons = -1;
     private int lastKnownFluid = -1;
 
@@ -112,6 +116,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         if (this.level != null && !this.level.isClientSide) {
             this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 3);
             this.level.invalidateCapabilities(this.worldPosition);
+            this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
         }
     }
 
@@ -122,11 +127,43 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         return Blocks.AIR.defaultBlockState();
     }
 
+    public SideMode getEffectiveFluidMode(@Nullable Direction side) {
+        if (side == null) {
+            return SideMode.BOTH;
+        }
+        SideMode fluidMode = fluidSideModes.getOrDefault(side, SideMode.BOTH);
+        SideMode energyMode = energySideModes.getOrDefault(side, SideMode.BOTH);
+
+        if (fluidMode != SideMode.BOTH) {
+            return fluidMode;
+        }
+        if (energyMode != SideMode.BOTH) {
+            return energyMode;
+        }
+        return SideMode.BOTH;
+    }
+
+    public SideMode getEffectiveEnergyMode(@Nullable Direction side) {
+        if (side == null) {
+            return SideMode.BOTH;
+        }
+        SideMode energyMode = energySideModes.getOrDefault(side, SideMode.BOTH);
+        SideMode fluidMode = fluidSideModes.getOrDefault(side, SideMode.BOTH);
+
+        if (energyMode != SideMode.BOTH) {
+            return energyMode;
+        }
+        if (fluidMode != SideMode.BOTH) {
+            return fluidMode;
+        }
+        return SideMode.BOTH;
+    }
+
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
         if (side == null) {
             return this;
         }
-        SideMode mode = fluidSideModes.getOrDefault(side, SideMode.BOTH);
+        SideMode mode = getEffectiveFluidMode(side);
         return switch (mode) {
             case BOTH -> this;
             case INPUT -> this.inputFluidWrapper;
@@ -139,7 +176,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         if (side == null) {
             return this;
         }
-        SideMode mode = energySideModes.getOrDefault(side, SideMode.BOTH);
+        SideMode mode = getEffectiveEnergyMode(side);
         return switch (mode) {
             case BOTH -> this;
             case INPUT -> this.inputEnergyWrapper;
@@ -148,10 +185,24 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         };
     }
 
+    public @Nullable UUID getOwner() {
+        return this.owner;
+    }
+
+    public void setOwner(@Nullable UUID owner) {
+        this.owner = owner;
+        setChanged();
+        if (this.level != null && !this.level.isClientSide) {
+            this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
+        }
+    }
+
     public ChrononHandler findConnectedMetronome() {
         if (this.level == null) {
             return null;
         }
+
+        // 1. Check physically adjacent blocks for a ChrononHandler capability
         for (Direction direction : Direction.values()) {
             BlockPos adjacent = this.worldPosition.relative(direction);
             if (this.level.getBlockEntity(adjacent) instanceof MetronomePortBlockEntity) {
@@ -163,15 +214,33 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
                     direction.getOpposite()
             );
             if (handler != null) {
+                if (this.owner == null) {
+                    BlockEntity adjacentBe = this.level.getBlockEntity(adjacent);
+                    if (adjacentBe instanceof MetronomeBe metronomeBe && metronomeBe.getOwner() != null) {
+                        this.owner = metronomeBe.getOwner().getId();
+                        setChanged();
+                    }
+                }
                 return handler;
             }
         }
+
+        // 2. If not adjacent to any Metronome block, connect to the player's Metronome network!
+        if (this.owner != null) {
+            if (!this.level.isClientSide) {
+                return new MultiversalChrononHandler(this.owner);
+            }
+        }
+
         return null;
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        if (this.owner != null) {
+            tag.putUUID("Owner", this.owner);
+        }
         tag.put("Buffer", this.buffer.writeToNBT(registries, new CompoundTag()));
 
         CompoundTag energyTag = new CompoundTag();
@@ -190,6 +259,9 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        if (tag.hasUUID("Owner")) {
+            this.owner = tag.getUUID("Owner");
+        }
         if (tag.contains("Buffer")) {
             this.buffer.readFromNBT(registries, tag.getCompound("Buffer"));
         }
@@ -225,7 +297,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     public @NotNull FluidStack getFluidInTank(int tank) {
         ChrononHandler metronome = findConnectedMetronome();
-        int amount = (metronome != null) ? metronome.getPower() : this.buffer.getFluidAmount();
+        int amount = (metronome != null && metronome.getMaxPower() > 0) ? metronome.getPower() : this.buffer.getFluidAmount();
         if (amount > 0) {
             return new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), amount);
         }
@@ -235,7 +307,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     public int getTankCapacity(int tank) {
         ChrononHandler metronome = findConnectedMetronome();
-        return (metronome != null) ? metronome.getMaxPower() : this.buffer.getCapacity();
+        return (metronome != null && metronome.getMaxPower() > 0) ? metronome.getMaxPower() : this.buffer.getCapacity();
     }
 
     @Override
@@ -251,7 +323,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         }
 
         ChrononHandler metronome = findConnectedMetronome();
-        if (metronome != null) {
+        if (metronome != null && metronome.getMaxPower() > 0) {
             int toFill = resource.getAmount();
             ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
             int inserted = metronome.insert(toFill, actionType);
@@ -299,7 +371,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         }
 
         ChrononHandler metronome = findConnectedMetronome();
-        if (metronome != null) {
+        if (metronome != null && metronome.getMaxPower() > 0) {
             ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
             int extracted = metronome.extract(maxDrain, actionType);
             if (extracted <= 0) {
@@ -339,13 +411,13 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     @Override
     public int getPower() {
         ChrononHandler metronome = findConnectedMetronome();
-        return (metronome != null) ? metronome.getPower() : this.buffer.getFluidAmount();
+        return (metronome != null && metronome.getMaxPower() > 0) ? metronome.getPower() : this.buffer.getFluidAmount();
     }
 
     @Override
     public int getMaxPower() {
         ChrononHandler metronome = findConnectedMetronome();
-        return (metronome != null) ? metronome.getMaxPower() : this.buffer.getCapacity();
+        return (metronome != null && metronome.getMaxPower() > 0) ? metronome.getMaxPower() : this.buffer.getCapacity();
     }
 
     @Override
@@ -364,7 +436,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
             return 0;
         }
         ChrononHandler metronome = findConnectedMetronome();
-        if (metronome != null) {
+        if (metronome != null && metronome.getMaxPower() > 0) {
             int inserted = metronome.insert(amount, action);
             if (action == ActionType.Execute && inserted > 0) {
                 int newPower = metronome.getPower();
@@ -403,7 +475,7 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
             return 0;
         }
         ChrononHandler metronome = findConnectedMetronome();
-        if (metronome != null) {
+        if (metronome != null && metronome.getMaxPower() > 0) {
             int extracted = metronome.extract(maxDrain, action);
             if (action == ActionType.Execute && extracted > 0) {
                 int newPower = metronome.getPower();
@@ -438,13 +510,13 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     public static void serverTick(Level level, BlockPos pos, BlockState state, MetronomePortBlockEntity port) {
         ChrononHandler metronome = port.findConnectedMetronome();
 
-        int targetCapacity = (metronome != null) ? metronome.getMaxPower() : BUFFER_CAPACITY;
+        int targetCapacity = (metronome != null && metronome.getMaxPower() > 0) ? metronome.getMaxPower() : BUFFER_CAPACITY;
         if (port.buffer.getCapacity() != targetCapacity) {
             port.buffer.setCapacity(targetCapacity);
             port.setChanged();
         }
 
-        if (metronome != null) {
+        if (metronome != null && metronome.getMaxPower() > 0) {
             int currentChronons = metronome.getPower();
             int currentFluid = port.buffer.getFluidAmount();
 

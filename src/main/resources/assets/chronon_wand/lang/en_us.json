@@ -40,5 +40,14 @@
   "gui.chronon_wand.tooltip.mode": "Mode: %s",
   "gui.chronon_wand.tooltip.adjacent": "Adjacent: %s",
   "gui.chronon_wand.tooltip.cycle_hint": "Left-click: Next | Right-click: Prev",
-  "gui.chronon_wand.block.air": "Air"
+  "gui.chronon_wand.block.air": "Air",
+  "item.chronon_wand.chronon_cell_4k": "4k Chronon Storage Cell",
+  "tooltip.chronon_wand.chronon_cell.bytes": "%s / %s Bytes Used",
+  "tooltip.chronon_wand.chronon_cell.chronons": "%s / %s Chronons",
+  "tooltip.chronon_wand.chronon_cell.scale": "Scale: 1 Byte = 8 Chronons",
+  "tooltip.chronon_wand.chronon_cell.drain": "Idle Drain: 1.0 AE/t",
+  "tooltip.chronon_wand.chronon_cell.disassemble": "Shift-Right-Click when empty to disassemble",
+  "tooltip.chronon_wand.chronon_cell.status.empty": "Status: Empty",
+  "tooltip.chronon_wand.chronon_cell.status.not_empty": "Status: In Use",
+  "tooltip.chronon_wand.chronon_cell.status.full": "Status: Full"
 }

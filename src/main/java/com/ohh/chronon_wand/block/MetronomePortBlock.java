@@ -47,6 +47,18 @@ public class MetronomePortBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state,
+                            @Nullable net.minecraft.world.entity.LivingEntity placer, @NotNull net.minecraft.world.item.ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && placer instanceof net.minecraft.world.entity.player.Player player) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof MetronomePortBlockEntity port) {
+                port.setOwner(player.getGameProfile().getId());
+            }
+        }
+    }
+
+    @Override
     protected @NotNull net.minecraft.world.ItemInteractionResult useItemOn(@NotNull net.minecraft.world.item.ItemStack stack,
                                                                           @NotNull BlockState state,
                                                                           @NotNull net.minecraft.world.level.Level level,
@@ -61,6 +73,10 @@ public class MetronomePortBlock extends BaseEntityBlock {
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof MetronomePortBlockEntity port)) {
             return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        if (port.getOwner() == null && player != null) {
+            port.setOwner(player.getGameProfile().getId());
         }
 
         earth.terrarium.tempad.api.tva_device.ChrononHandler itemHandler = stack.getCapability(earth.terrarium.tempad.api.tva_device.ChrononHandler.Capabilities.getItem());
@@ -112,6 +128,9 @@ public class MetronomePortBlock extends BaseEntityBlock {
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof MetronomePortBlockEntity port) {
+                if (port.getOwner() == null && player != null) {
+                    port.setOwner(player.getGameProfile().getId());
+                }
                 net.minecraft.world.inventory.ContainerData serverData = new net.minecraft.world.inventory.ContainerData() {
                     @Override
                     public int get(int index) {

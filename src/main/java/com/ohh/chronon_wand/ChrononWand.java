@@ -20,5 +20,15 @@ public class ChrononWand {
         ModDataComponents.register(modEventBus);
         com.ohh.chronon_wand.entity.ModEntities.register(modEventBus);
         com.ohh.chronon_wand.menu.ModMenus.register(modEventBus);
+
+        modEventBus.addListener(this::commonSetup);
+    }
+
+    private void commonSetup(net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            if (net.neoforged.fml.ModList.get().isLoaded("ae2")) {
+                com.ohh.chronon_wand.compat.ae2.AE2Compat.init();
+            }
+        });
     }
 }
