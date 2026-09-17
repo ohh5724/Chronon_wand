@@ -185,6 +185,19 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         };
     }
 
+
+    public @Nullable appeng.api.storage.MEStorage getMEStorage(@Nullable Direction side) {
+        if (side == null) {
+            return new com.ohh.chronon_wand.compat.ae2.MetronomePortMEStorage(this, Direction.UP);
+        }
+        SideMode energyMode = getEffectiveEnergyMode(side);
+        SideMode fluidMode = getEffectiveFluidMode(side);
+        if (energyMode == SideMode.NONE && fluidMode == SideMode.NONE) {
+            return null;
+        }
+        return new com.ohh.chronon_wand.compat.ae2.MetronomePortMEStorage(this, side);
+    }
+
     public @Nullable UUID getOwner() {
         return this.owner;
     }

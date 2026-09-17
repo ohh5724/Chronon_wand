@@ -90,8 +90,14 @@ public class AcceleratorEntity extends Entity {
 
         for (int i = 0; i < rate - 1; i++) {
             if (state.isRandomlyTicking()) {
-                if (this.level().random.nextInt(1365) == 0) {
+                int bound = Math.max(1, 4096 / (rate + 1));
+                if (this.level().random.nextInt(bound) == 0) {
                     state.randomTick((ServerLevel) this.level(), pos, this.level().random);
+                    state = this.level().getBlockState(pos);
+                    if (state.isAir()) {
+                        this.discard();
+                        return;
+                    }
                 }
             }
 

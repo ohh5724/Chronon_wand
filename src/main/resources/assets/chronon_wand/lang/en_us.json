@@ -41,6 +41,7 @@
   "gui.chronon_wand.tooltip.adjacent": "Adjacent: %s",
   "gui.chronon_wand.tooltip.cycle_hint": "Left-click: Next | Right-click: Prev",
   "gui.chronon_wand.block.air": "Air",
+  "key.chronon_wand.chronons": "Chronons",
   "item.chronon_wand.chronon_cell_4k": "4k Chronon Storage Cell",
   "tooltip.chronon_wand.chronon_cell.bytes": "%s / %s Bytes Used",
   "tooltip.chronon_wand.chronon_cell.chronons": "%s / %s Chronons",

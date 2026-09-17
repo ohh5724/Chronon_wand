@@ -3,7 +3,6 @@ package com.ohh.chronon_wand.compat.ae2;
 import appeng.api.config.Actionable;
 import appeng.api.ids.AEComponents;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
@@ -11,7 +10,6 @@ import appeng.api.storage.cells.CellState;
 import appeng.api.storage.cells.ISaveProvider;
 import appeng.api.storage.cells.StorageCell;
 import com.ohh.chronon_wand.ModDataComponents;
-import com.ohh.chronon_wand.fluid.ModFluids;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -37,8 +35,9 @@ public class ChrononCellInventory implements StorageCell {
         List<GenericStack> list = stack.get(AEComponents.STORAGE_CELL_INV);
         if (list != null) {
             for (GenericStack gs : list) {
-                if (gs != null && gs.what() instanceof AEFluidKey fk && fk.getFluid().isSame(ModFluids.CHRONON_FLUID_SOURCE.get())) {
-                    storedChronons += gs.amount();
+                if (gs != null && gs.what() instanceof ChrononKey) {
+                    storedChronons = gs.amount();
+                    break;
                 }
             }
         } else {
@@ -73,7 +72,9 @@ public class ChrononCellInventory implements StorageCell {
             stack.remove(AEComponents.STORAGE_CELL_INV);
             stack.remove(ModDataComponents.STORED_CHRONONS.get());
         } else {
-            stack.set(AEComponents.STORAGE_CELL_INV, List.of(new GenericStack(AEFluidKey.of(ModFluids.CHRONON_FLUID_SOURCE.get()), storedChronons)));
+            stack.set(AEComponents.STORAGE_CELL_INV, List.of(
+                new GenericStack(ChrononKey.KEY, storedChronons)
+            ));
             stack.set(ModDataComponents.STORED_CHRONONS.get(), (int) Math.min(Integer.MAX_VALUE, storedChronons));
         }
         isPersisted = true;
@@ -90,13 +91,12 @@ public class ChrononCellInventory implements StorageCell {
 
     @Override
     public boolean isPreferredStorageFor(AEKey what, IActionSource source) {
-        return what instanceof AEFluidKey fk && fk.getFluid().isSame(ModFluids.CHRONON_FLUID_SOURCE.get());
+        return what instanceof ChrononKey;
     }
 
     @Override
     public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
-        if (what == null || amount <= 0) return 0;
-        if (!(what instanceof AEFluidKey fk) || !fk.getFluid().isSame(ModFluids.CHRONON_FLUID_SOURCE.get())) {
+        if (what == null || amount <= 0 || !(what instanceof ChrononKey)) {
             return 0;
         }
         long space = CAPACITY - storedChronons;
@@ -111,8 +111,7 @@ public class ChrononCellInventory implements StorageCell {
 
     @Override
     public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
-        if (what == null || amount <= 0) return 0;
-        if (!(what instanceof AEFluidKey fk) || !fk.getFluid().isSame(ModFluids.CHRONON_FLUID_SOURCE.get())) {
+        if (what == null || amount <= 0 || !(what instanceof ChrononKey)) {
             return 0;
         }
         long extracted = Math.min(storedChronons, amount);
@@ -127,7 +126,7 @@ public class ChrononCellInventory implements StorageCell {
     @Override
     public void getAvailableStacks(KeyCounter out) {
         if (storedChronons > 0) {
-            out.add(AEFluidKey.of(ModFluids.CHRONON_FLUID_SOURCE.get()), storedChronons);
+            out.add(ChrononKey.KEY, storedChronons);
         }
     }
 
@@ -144,4 +143,3 @@ public class ChrononCellInventory implements StorageCell {
         return storedChronons <= 0 ? 0 : (storedChronons + BYTES_PER_CHRONON_RATIO - 1) / BYTES_PER_CHRONON_RATIO;
     }
 }
-

@@ -1,23 +1,36 @@
 package com.ohh.chronon_wand.compat.ae2;
 
+import appeng.api.AECapabilities;
+import appeng.api.client.AEKeyRendering;
 import appeng.api.client.StorageCellModels;
 import appeng.api.ids.AEComponents;
-import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.AEKeyTypes;
 import appeng.api.stacks.GenericStack;
 import appeng.api.storage.StorageCells;
 import appeng.api.storage.cells.CellState;
 import appeng.api.storage.cells.StorageCell;
 import com.ohh.chronon_wand.ModDataComponents;
 import com.ohh.chronon_wand.ModItems;
-import com.ohh.chronon_wand.fluid.ModFluids;
+import com.ohh.chronon_wand.block.entity.ModBlockEntities;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import java.util.List;
 
 public class AE2Compat {
     public static final boolean IS_LOADED = ModList.get().isLoaded("ae2");
+
+    private static boolean registeredKeyType = false;
+
+    public static synchronized void onRegister(net.neoforged.neoforge.registries.RegisterEvent event) {
+        if (!IS_LOADED || registeredKeyType) return;
+        if (event.getRegistryKey().equals(appeng.api.stacks.AEKeyType.REGISTRY_KEY) || event.getRegistryKey().equals(net.minecraft.core.registries.Registries.BLOCK)) {
+            registeredKeyType = true;
+            AEKeyTypes.register(ChrononKeyType.TYPE);
+        }
+    }
 
     public static void init() {
         if (IS_LOADED) {
@@ -27,7 +40,18 @@ public class AE2Compat {
 
     public static void initClient() {
         if (IS_LOADED) {
-            StorageCellModels.registerModel(ModItems.CHRONON_CELL_4K.get(), ResourceLocation.parse("ae2:block/drive/cells/4k_fluid_cell"));
+            StorageCellModels.registerModel(ModItems.CHRONON_CELL_4K.get(), ResourceLocation.parse("ae2:block/drive/cells/4k_item_cell"));
+            AEKeyRendering.register(ChrononKeyType.TYPE, ChrononKey.class, ChrononKeyRenderHandler.INSTANCE);
+        }
+    }
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        if (IS_LOADED) {
+            event.registerBlockEntity(
+                AECapabilities.ME_STORAGE,
+                ModBlockEntities.METRONOME_PORT.get(),
+                (be, side) -> be.getMEStorage(side)
+            );
         }
     }
 
@@ -37,8 +61,10 @@ public class AE2Compat {
             List<GenericStack> list = stack.get(AEComponents.STORAGE_CELL_INV);
             if (list != null) {
                 for (GenericStack gs : list) {
-                    if (gs != null && gs.what() instanceof AEFluidKey fk && fk.getFluid().isSame(ModFluids.CHRONON_FLUID_SOURCE.get())) {
-                        return gs.amount();
+                    if (gs != null) {
+                        if (gs.what() instanceof ChrononKey) {
+                            return gs.amount();
+                        }
                     }
                 }
             }
@@ -54,4 +80,3 @@ public class AE2Compat {
         return state.getStateColor();
     }
 }
-

@@ -58,7 +58,10 @@ public class ChrononStorageCellItem extends Item {
 
     private void disassemble(Level level, Player player, ItemStack cellStack) {
         cellStack.shrink(1);
-        Item housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:fluid_cell_housing"));
+        Item housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:item_cell_housing"));
+        if (housing == null || housing == Items.AIR) {
+            housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:fluid_cell_housing"));
+        }
         Item component = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:cell_component_4k"));
 
         if (housing != null && housing != Items.AIR) {
