@@ -32,18 +32,22 @@ public class ChrononCellInventory implements StorageCell {
     }
 
     private void load() {
+        boolean foundKey = false;
         List<GenericStack> list = stack.get(AEComponents.STORAGE_CELL_INV);
         if (list != null) {
             for (GenericStack gs : list) {
                 if (gs != null && gs.what() instanceof ChrononKey) {
                     storedChronons = gs.amount();
+                    foundKey = true;
                     break;
                 }
             }
-        } else {
+        }
+        if (!foundKey) {
             Integer sc = stack.get(ModDataComponents.STORED_CHRONONS.get());
-            if (sc != null) {
+            if (sc != null && sc > 0) {
                 storedChronons = sc.longValue();
+                isPersisted = false;
             }
         }
         storedChronons = Math.clamp(storedChronons, 0L, CAPACITY);

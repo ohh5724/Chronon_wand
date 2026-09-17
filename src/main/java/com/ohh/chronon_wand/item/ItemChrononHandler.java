@@ -30,7 +30,7 @@ public class ItemChrononHandler implements ChrononHandler {
 
     @Override
     public boolean getCanExtract() {
-        return false; // Users can't extract from the wand
+        return true;
     }
 
     @Override

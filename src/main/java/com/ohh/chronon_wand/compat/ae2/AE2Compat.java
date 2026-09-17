@@ -35,6 +35,48 @@ public class AE2Compat {
     public static void init() {
         if (IS_LOADED) {
             StorageCells.addCellHandler(ChrononCellHandler.INSTANCE);
+            appeng.api.behaviors.GenericSlotCapacities.register(ChrononKeyType.TYPE, 1000000L);
+            appeng.api.behaviors.ContainerItemStrategy.register(ChrononKeyType.TYPE, ChrononKey.class, new ChrononContainerItemStrategy());
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(AE2Compat::onContainerOpen);
+        }
+    }
+
+    private static void onContainerOpen(net.neoforged.neoforge.event.entity.player.PlayerContainerEvent.Open event) {
+        if (event.getContainer() instanceof appeng.menu.interfaces.KeyTypeSelectionMenu menu) {
+            try {
+                appeng.api.util.KeyTypeSelection sel = menu.getServerKeyTypeSelection();
+                if (sel != null && !sel.isEnabled(ChrononKeyType.TYPE)) {
+                    boolean shouldEnable = false;
+                    if (menu instanceof appeng.menu.me.common.MEStorageMenu storageMenu) {
+                        appeng.api.storage.ITerminalHost host = storageMenu.getHost();
+                        if (host instanceof appeng.parts.AEBasePart part) {
+                            net.minecraft.world.level.block.entity.BlockEntity be = part.getBlockEntity();
+                            if (be != null) {
+                                String flag = "chronon_wand_init_" + (part.getSide() != null ? part.getSide().getName() : "part");
+                                if (!be.getPersistentData().getBoolean(flag)) {
+                                    be.getPersistentData().putBoolean(flag, true);
+                                    be.setChanged();
+                                    shouldEnable = true;
+                                }
+                            }
+                        } else if (host instanceof net.minecraft.world.level.block.entity.BlockEntity be) {
+                            if (!be.getPersistentData().getBoolean("chronon_wand_init")) {
+                                be.getPersistentData().putBoolean("chronon_wand_init", true);
+                                be.setChanged();
+                                shouldEnable = true;
+                            }
+                        } else {
+                            shouldEnable = true;
+                        }
+                    } else {
+                        shouldEnable = true;
+                    }
+
+                    if (shouldEnable) {
+                        sel.setEnabled(ChrononKeyType.TYPE, true);
+                    }
+                }
+            } catch (Throwable ignored) {}
         }
     }
 
@@ -42,6 +84,7 @@ public class AE2Compat {
         if (IS_LOADED) {
             StorageCellModels.registerModel(ModItems.CHRONON_CELL_4K.get(), ResourceLocation.parse("ae2:block/drive/cells/4k_item_cell"));
             AEKeyRendering.register(ChrononKeyType.TYPE, ChrononKey.class, ChrononKeyRenderHandler.INSTANCE);
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ChrononAE2ClientEvents::onScreenMouseClicked);
         }
     }
 
