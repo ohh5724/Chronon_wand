@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "chronon_wand:item/chronon_cell_16m",
+    "layer1": "chronon_wand:item/storage_cell_led"
+  }
+}

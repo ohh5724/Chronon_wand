@@ -189,6 +189,9 @@ tasks.register('copyJarToPrism', Copy) {
     group = 'mod development'
     description = 'Copies the compiled mod JAR to the Prism Launcher instance mods folder.'
 
+    // Always execute copy
+    outputs.upToDateWhen { false }
+
     // Take the output JAR produced by the jar task
     from tasks.named('jar')
     into prismModsDir

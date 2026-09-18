@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {"type": "neoforge:mod_loaded", "modid": "ae2"}
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "chronon_wand:chronon_cell_housing"
+    },
+    {
+      "item": "ae2:cell_component_1k"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:chronon_cell_1k"
+  }
+}

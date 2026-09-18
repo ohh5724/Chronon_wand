@@ -1,7 +1,7 @@
 package com.ohh.chronon_wand.item;
 
+import com.ohh.chronon_wand.ModItems;
 import com.ohh.chronon_wand.compat.ae2.AE2Compat;
-import com.ohh.chronon_wand.compat.ae2.ChrononCellInventory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -22,13 +22,19 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ChrononStorageCellItem extends Item {
+    private final CellTier tier;
 
-    public ChrononStorageCellItem(Properties properties) {
-        super(properties);
+    public ChrononStorageCellItem(CellTier tier) {
+        super(new Item.Properties().stacksTo(1));
+        this.tier = tier != null ? tier : CellTier.TIER_4K;
     }
 
     public ChrononStorageCellItem() {
-        this(new Item.Properties().stacksTo(1));
+        this(CellTier.TIER_4K);
+    }
+
+    public CellTier getTier() {
+        return tier;
     }
 
     @Override
@@ -58,11 +64,11 @@ public class ChrononStorageCellItem extends Item {
 
     private void disassemble(Level level, Player player, ItemStack cellStack) {
         cellStack.shrink(1);
-        Item housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:item_cell_housing"));
+        Item housing = ModItems.CHRONON_CELL_HOUSING.get();
         if (housing == null || housing == Items.AIR) {
-            housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:fluid_cell_housing"));
+            housing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:item_cell_housing"));
         }
-        Item component = BuiltInRegistries.ITEM.get(ResourceLocation.parse("ae2:cell_component_4k"));
+        Item component = BuiltInRegistries.ITEM.get(ResourceLocation.parse(tier.getComponentId()));
 
         if (housing != null && housing != Items.AIR) {
             player.getInventory().placeItemBackInInventory(new ItemStack(housing));
@@ -78,24 +84,24 @@ public class ChrononStorageCellItem extends Item {
         super.appendHoverText(stack, context, tooltip, tooltipFlag);
 
         long stored = AE2Compat.getStoredChronons(stack);
-        long totalBytes = ChrononCellInventory.TOTAL_BYTES;
-        long usedBytes = stored <= 0 ? 0 : (stored + ChrononCellInventory.BYTES_PER_CHRONON_RATIO - 1) / ChrononCellInventory.BYTES_PER_CHRONON_RATIO;
+        long totalBytes = tier.getTotalBytes();
+        long capacity = tier.getCapacity();
+        long usedBytes = stored <= 0 ? 0 : (stored + CellTier.BYTES_PER_CHRONON_RATIO - 1) / CellTier.BYTES_PER_CHRONON_RATIO;
 
         tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.bytes",
                 String.format("%,d", usedBytes), String.format("%,d", totalBytes)).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.chronons",
-                String.format("%,d", stored), String.format("%,d", ChrononCellInventory.CAPACITY)).withStyle(ChatFormatting.GOLD));
+                String.format("%,d", stored), String.format("%,d", capacity)).withStyle(ChatFormatting.GOLD));
         tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.scale").withStyle(ChatFormatting.DARK_AQUA));
         tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.drain").withStyle(ChatFormatting.DARK_GRAY));
 
         if (stored <= 0) {
             tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.status.empty").withStyle(ChatFormatting.GREEN));
             tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.disassemble").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-        } else if (stored >= ChrononCellInventory.CAPACITY) {
+        } else if (stored >= capacity) {
             tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.status.full").withStyle(ChatFormatting.RED));
         } else {
             tooltip.add(Component.translatable("tooltip.chronon_wand.chronon_cell.status.not_empty").withStyle(ChatFormatting.AQUA));
         }
     }
 }
-

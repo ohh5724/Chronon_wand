@@ -1,21 +1,15 @@
 {
   "neoforge:conditions": [
-    {
-      "type": "neoforge:mod_loaded",
-      "mod_id": "ae2"
-    }
+    {"type": "neoforge:mod_loaded", "modid": "ae2"}
   ],
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
     {
-      "item": "ae2:fluid_cell_housing"
+      "item": "chronon_wand:chronon_cell_housing"
     },
     {
       "item": "ae2:cell_component_4k"
-    },
-    {
-      "item": "tempad:chronon_battery"
     }
   ],
   "result": {
@@ -23,4 +17,3 @@
     "id": "chronon_wand:chronon_cell_4k"
   }
 }
-

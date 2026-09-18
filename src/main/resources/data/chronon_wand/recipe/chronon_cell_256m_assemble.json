@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {"type": "neoforge:mod_loaded", "modid": "ae2"},
+    {"type": "neoforge:mod_loaded", "modid": "megacells"}
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "chronon_wand:chronon_cell_housing"
+    },
+    {
+      "item": "megacells:cell_component_256m"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:chronon_cell_256m"
+  }
+}

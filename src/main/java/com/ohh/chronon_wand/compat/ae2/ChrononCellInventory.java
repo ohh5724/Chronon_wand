@@ -10,25 +10,32 @@ import appeng.api.storage.cells.CellState;
 import appeng.api.storage.cells.ISaveProvider;
 import appeng.api.storage.cells.StorageCell;
 import com.ohh.chronon_wand.ModDataComponents;
+import com.ohh.chronon_wand.item.CellTier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 public class ChrononCellInventory implements StorageCell {
-    public static final long TOTAL_BYTES = 4096L;
-    public static final int BYTES_PER_CHRONON_RATIO = 8; // 1 Byte = 8 Chronons
-    public static final long CAPACITY = TOTAL_BYTES * BYTES_PER_CHRONON_RATIO; // 32,768 Chronons
+    public static final int BYTES_PER_CHRONON_RATIO = CellTier.BYTES_PER_CHRONON_RATIO;
 
     private final ItemStack stack;
     private final ISaveProvider saveProvider;
+    private final CellTier tier;
+    private final long capacity;
     private long storedChronons = 0L;
     private boolean isPersisted = true;
 
-    public ChrononCellInventory(ItemStack stack, ISaveProvider saveProvider) {
+    public ChrononCellInventory(ItemStack stack, ISaveProvider saveProvider, CellTier tier) {
         this.stack = stack;
         this.saveProvider = saveProvider;
+        this.tier = tier != null ? tier : CellTier.TIER_4K;
+        this.capacity = this.tier.getCapacity();
         load();
+    }
+
+    public ChrononCellInventory(ItemStack stack, ISaveProvider saveProvider) {
+        this(stack, saveProvider, CellTier.TIER_4K);
     }
 
     private void load() {
@@ -50,14 +57,14 @@ public class ChrononCellInventory implements StorageCell {
                 isPersisted = false;
             }
         }
-        storedChronons = Math.clamp(storedChronons, 0L, CAPACITY);
+        storedChronons = Math.clamp(storedChronons, 0L, capacity);
     }
 
     @Override
     public CellState getStatus() {
         if (storedChronons <= 0) {
             return CellState.EMPTY;
-        } else if (storedChronons >= CAPACITY) {
+        } else if (storedChronons >= capacity) {
             return CellState.FULL;
         } else {
             return CellState.NOT_EMPTY;
@@ -66,7 +73,7 @@ public class ChrononCellInventory implements StorageCell {
 
     @Override
     public double getIdleDrain() {
-        return 1.0;
+        return 0.5 + 0.5 * (tier.ordinal() + 1);
     }
 
     @Override
@@ -103,7 +110,7 @@ public class ChrononCellInventory implements StorageCell {
         if (what == null || amount <= 0 || !(what instanceof ChrononKey)) {
             return 0;
         }
-        long space = CAPACITY - storedChronons;
+        long space = capacity - storedChronons;
         if (space <= 0) return 0;
         long inserted = Math.min(space, amount);
         if (mode == Actionable.MODULATE) {
@@ -141,6 +148,14 @@ public class ChrononCellInventory implements StorageCell {
 
     public long getStoredChronons() {
         return storedChronons;
+    }
+
+    public CellTier getTier() {
+        return tier;
+    }
+
+    public long getCapacity() {
+        return capacity;
     }
 
     public long getUsedBytes() {

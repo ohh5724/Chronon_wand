@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {"type": "neoforge:mod_loaded", "modid": "ae2"},
+    {"type": "neoforge:mod_loaded", "modid": "tempad"},
+    {"type": "neoforge:mod_loaded", "modid": "justdirethings"}
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "V": {
+      "item": "ae2:quartz_vibrant_glass"
+    },
+    "C": {
+      "item": "justdirethings:time_crystal"
+    },
+    "S": {
+      "item": "tempad:time_steel"
+    },
+    "G": {
+      "item": "ae2:cell_component_256k"
+    }
+  },
+  "pattern": [
+    "VCV",
+    "CGC",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:chronon_cell_256k"
+  }
+}

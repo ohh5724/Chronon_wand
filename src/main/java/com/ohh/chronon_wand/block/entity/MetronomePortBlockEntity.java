@@ -131,32 +131,14 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         if (side == null) {
             return SideMode.BOTH;
         }
-        SideMode fluidMode = fluidSideModes.getOrDefault(side, SideMode.BOTH);
-        SideMode energyMode = energySideModes.getOrDefault(side, SideMode.BOTH);
-
-        if (fluidMode != SideMode.BOTH) {
-            return fluidMode;
-        }
-        if (energyMode != SideMode.BOTH) {
-            return energyMode;
-        }
-        return SideMode.BOTH;
+        return fluidSideModes.getOrDefault(side, SideMode.BOTH);
     }
 
     public SideMode getEffectiveEnergyMode(@Nullable Direction side) {
         if (side == null) {
             return SideMode.BOTH;
         }
-        SideMode energyMode = energySideModes.getOrDefault(side, SideMode.BOTH);
-        SideMode fluidMode = fluidSideModes.getOrDefault(side, SideMode.BOTH);
-
-        if (energyMode != SideMode.BOTH) {
-            return energyMode;
-        }
-        if (fluidMode != SideMode.BOTH) {
-            return fluidMode;
-        }
-        return SideMode.BOTH;
+        return energySideModes.getOrDefault(side, SideMode.BOTH);
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {

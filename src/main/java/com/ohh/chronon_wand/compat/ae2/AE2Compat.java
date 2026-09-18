@@ -9,6 +9,7 @@ import appeng.api.stacks.GenericStack;
 import appeng.api.storage.StorageCells;
 import appeng.api.storage.cells.CellState;
 import appeng.api.storage.cells.StorageCell;
+import com.ohh.chronon_wand.ChrononWand;
 import com.ohh.chronon_wand.ModDataComponents;
 import com.ohh.chronon_wand.ModItems;
 import com.ohh.chronon_wand.block.entity.ModBlockEntities;
@@ -82,7 +83,11 @@ public class AE2Compat {
 
     public static void initClient() {
         if (IS_LOADED) {
-            StorageCellModels.registerModel(ModItems.CHRONON_CELL_4K.get(), ResourceLocation.parse("ae2:block/drive/cells/4k_item_cell"));
+            for (var entry : ModItems.CHRONON_CELLS.entrySet()) {
+                com.ohh.chronon_wand.item.CellTier tier = entry.getKey();
+                String modid = tier.isMega() ? "megacells" : ChrononWand.MOD_ID;
+                StorageCellModels.registerModel(entry.getValue().get(), ResourceLocation.parse(modid + ":block/drive/cells/" + tier.getName() + "_item_cell"));
+            }
             AEKeyRendering.register(ChrononKeyType.TYPE, ChrononKey.class, ChrononKeyRenderHandler.INSTANCE);
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ChrononAE2ClientEvents::onScreenMouseClicked);
         }
@@ -117,9 +122,9 @@ public class AE2Compat {
     }
 
     public static int getCellLedColor(ItemStack stack) {
-        if (!IS_LOADED) return 0x00FF00;
+        if (!IS_LOADED) return net.minecraft.util.FastColor.ARGB32.opaque(0x00FF00);
         StorageCell inv = StorageCells.getCellInventory(stack, null);
         CellState state = inv != null ? inv.getStatus() : CellState.EMPTY;
-        return state.getStateColor();
+        return net.minecraft.util.FastColor.ARGB32.opaque(state.getStateColor());
     }
 }

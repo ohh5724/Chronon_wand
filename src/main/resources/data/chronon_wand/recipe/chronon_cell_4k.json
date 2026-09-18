@@ -1,37 +1,32 @@
 {
   "neoforge:conditions": [
-    {
-      "type": "neoforge:mod_loaded",
-      "mod_id": "ae2"
-    }
+    {"type": "neoforge:mod_loaded", "modid": "ae2"},
+    {"type": "neoforge:mod_loaded", "modid": "tempad"},
+    {"type": "neoforge:mod_loaded", "modid": "justdirethings"}
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "a": {
-      "item": "ae2:quartz_glass"
+    "V": {
+      "item": "ae2:quartz_vibrant_glass"
     },
-    "b": {
-      "tag": "c:dusts/redstone"
+    "C": {
+      "item": "justdirethings:time_crystal"
     },
-    "c": {
+    "S": {
+      "item": "tempad:time_steel"
+    },
+    "G": {
       "item": "ae2:cell_component_4k"
-    },
-    "d": {
-      "item": "tempad:chronon_battery"
-    },
-    "e": {
-      "tag": "c:ingots/copper"
     }
   },
   "pattern": [
-    "aba",
-    "bcb",
-    "ede"
+    "VCV",
+    "CGC",
+    "SSS"
   ],
   "result": {
     "count": 1,
     "id": "chronon_wand:chronon_cell_4k"
   }
 }
-
