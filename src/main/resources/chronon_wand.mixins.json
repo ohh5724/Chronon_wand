@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.ohh.chronon_wand.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "com.ohh.chronon_wand.compat.ae2importexportcard.AE2IECMixinPlugin",
+  "mixins": [
+    "WirelessTerminalItemMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
