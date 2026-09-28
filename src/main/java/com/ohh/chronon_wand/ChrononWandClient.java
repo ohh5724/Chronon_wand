@@ -8,12 +8,13 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import com.ohh.chronon_wand.client.ConfigScreenFactory;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = ChrononWand.MODID, dist = Dist.CLIENT)
 public class ChrononWandClient {
     public ChrononWandClient(ModContainer container, IEventBus modEventBus) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, (client, parent) -> ConfigScreenFactory.createScreen(parent));
 
         modEventBus.addListener(ChrononWandClient::onClientSetup);
         modEventBus.addListener(ChrononWandClient::registerItemColors);

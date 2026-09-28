@@ -12,6 +12,8 @@ public class ChrononWand {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public ChrononWand(IEventBus modEventBus) {
+        com.ohh.chronon_wand.config.ChrononWandConfig.load();
+
         com.ohh.chronon_wand.fluid.ModFluids.register(modEventBus);
         ModBlocks.register(modEventBus);
         com.ohh.chronon_wand.block.entity.ModBlockEntities.register(modEventBus);
