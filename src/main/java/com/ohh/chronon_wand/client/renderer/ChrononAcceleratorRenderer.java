@@ -36,7 +36,7 @@ public class ChrononAcceleratorRenderer implements BlockEntityRenderer<ChrononAc
         LevelRenderer.renderLineBox(poseStack, lineBuilder, wireframeAABB, 0.0f, 1.0f, 0.0f, 0.8f);
 
         // Solid Fill
-        VertexConsumer quadBuilder = bufferSource.getBuffer(RenderType.debugQuads());
+        VertexConsumer quadBuilder = bufferSource.getBuffer(ChrononRenderTypes.TRANSLUCENT_BOX);
         Matrix4f matrix = poseStack.last().pose();
 
         float minX = (float) solidAABB.minX;
