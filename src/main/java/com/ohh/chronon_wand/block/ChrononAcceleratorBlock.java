@@ -61,7 +61,7 @@ public class ChrononAcceleratorBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull BlockState mirror(@NotNull BlockState state, @NotNull Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
     @Override
