@@ -17,5 +17,10 @@ public class ModNetwork {
                 SetSideModePayload.STREAM_CODEC,
                 SetSideModePayload::handle
         );
+        registrar.playToServer(
+                AcceleratorSettingsPayload.TYPE,
+                AcceleratorSettingsPayload.STREAM_CODEC,
+                AcceleratorSettingsPayload::handle
+        );
     }
 }

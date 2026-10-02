@@ -5,11 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "com.ohh.chronon_wand.compat.ae2importexportcard.AE2IECMixinPlugin",
   "mixins": [
-    "WirelessTerminalItemMixin"
+    "WirelessTerminalItemLegacyMixin",
+    "WirelessTerminalItemModernMixin"
   ],
   "client": [],
   "injectors": {
     "defaultRequire": 1
   }
 }
-

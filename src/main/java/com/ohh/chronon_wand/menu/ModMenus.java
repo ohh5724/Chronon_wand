@@ -17,6 +17,11 @@ public class ModMenus {
             () -> IMenuTypeExtension.create(MetronomePortMenu::new)
     );
 
+    public static final Supplier<MenuType<ChrononAcceleratorMenu>> CHRONON_ACCELERATOR_MENU = MENUS.register(
+            "chronon_accelerator_menu",
+            () -> IMenuTypeExtension.create(ChrononAcceleratorMenu::new)
+    );
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

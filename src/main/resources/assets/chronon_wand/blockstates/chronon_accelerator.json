@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "chronon_wand:block/chronon_accelerator",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "chronon_wand:block/chronon_accelerator",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "chronon_wand:block/chronon_accelerator",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "chronon_wand:block/chronon_accelerator",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "chronon_wand:block/chronon_accelerator"
+    },
+    "facing=west": {
+      "model": "chronon_wand:block/chronon_accelerator",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

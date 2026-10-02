@@ -6,9 +6,11 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import com.ohh.chronon_wand.client.ConfigScreenFactory;
+
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = ChrononWand.MODID, dist = Dist.CLIENT)
@@ -18,6 +20,8 @@ public class ChrononWandClient {
 
         modEventBus.addListener(ChrononWandClient::onClientSetup);
         modEventBus.addListener(ChrononWandClient::registerItemColors);
+        modEventBus.addListener(ChrononWandClient::registerRenderers);
+        modEventBus.addListener(ChrononWandClient::registerScreens);
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
@@ -37,5 +41,19 @@ public class ChrononWandClient {
                 return -1;
             }, cellHolder.get());
         }
+    }
+
+    private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(
+            com.ohh.chronon_wand.block.entity.ModBlockEntities.CHRONON_ACCELERATOR.get(),
+            ctx -> new com.ohh.chronon_wand.client.renderer.ChrononAcceleratorRenderer(ctx)
+        );
+    }
+
+    private static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(
+            com.ohh.chronon_wand.menu.ModMenus.CHRONON_ACCELERATOR_MENU.get(),
+            com.ohh.chronon_wand.client.screen.ChrononAcceleratorScreen::new
+        );
     }
 }

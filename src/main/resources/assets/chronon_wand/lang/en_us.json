@@ -60,5 +60,20 @@
   "tooltip.chronon_wand.chronon_cell.disassemble": "Shift-Right-Click when empty to disassemble",
   "tooltip.chronon_wand.chronon_cell.status.empty": "Status: Empty",
   "tooltip.chronon_wand.chronon_cell.status.not_empty": "Status: In Use",
-  "tooltip.chronon_wand.chronon_cell.status.full": "Status: Full"
+  "tooltip.chronon_wand.chronon_cell.status.full": "Status: Full",
+  "block.chronon_wand.chronon_accelerator": "Chronon Accelerator",
+  "gui.chronon_wand.accelerator.title": "Chronon Accelerator",
+  "gui.chronon_wand.chronon_accelerator.title": "Chronon Accelerator",
+  "gui.chronon_wand.accelerator.speed": "Speed: %sx",
+  "gui.chronon_wand.accelerator.cost": "Cost: %s/s",
+  "gui.chronon_wand.accelerator.radius": "%s Radius",
+  "gui.chronon_wand.accelerator.offset": "%s Offset",
+  "gui.chronon_wand.accelerator.render_area": "Show Area",
+  "gui.chronon_wand.accelerator.redstone.ignored": "Redstone: Ignored",
+  "gui.chronon_wand.accelerator.redstone.low": "Redstone: Low",
+  "gui.chronon_wand.accelerator.redstone.high": "Redstone: High",
+  "gui.chronon_wand.accelerator.status.accelerating": "Accelerating %s blocks",
+  "gui.chronon_wand.accelerator.status.idle": "Idle",
+  "gui.chronon_wand.accelerator.status.no_power": "No Power",
+  "gui.chronon_wand.accelerator.chronons": "Chronons: %s / %s"
 }

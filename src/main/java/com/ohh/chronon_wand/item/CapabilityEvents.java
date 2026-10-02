@@ -18,6 +18,9 @@ public class CapabilityEvents {
         event.registerItem(ChrononHandler.Capabilities.getItem(), (stack, ctx) -> new ItemChrononHandler(stack), ModItems.CHRONON_WAND.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.METRONOME_PORT.get(), (be, side) -> be.getFluidHandler(side));
         event.registerBlockEntity(ChrononHandler.Capabilities.getBlock(), ModBlockEntities.METRONOME_PORT.get(), (be, side) -> be.getChrononHandler(side));
+        
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.CHRONON_ACCELERATOR.get(), (be, side) -> be);
+        event.registerBlockEntity(ChrononHandler.Capabilities.getBlock(), ModBlockEntities.CHRONON_ACCELERATOR.get(), (be, side) -> be);
 
         if (net.neoforged.fml.ModList.get().isLoaded("ae2")) {
             com.ohh.chronon_wand.compat.ae2.AE2Compat.registerCapabilities(event);

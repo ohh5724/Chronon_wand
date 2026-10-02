@@ -21,8 +21,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Mixin for AE2 Import Export Card versions < 1.9.0 (11-parameter exportToPlayerSlot).
+ */
 @Mixin(value = WirelessTerminalItem.class, priority = 1100)
-public abstract class WirelessTerminalItemMixin {
+public abstract class WirelessTerminalItemLegacyMixin {
 
     @Dynamic
     @Shadow(remap = false)
@@ -112,4 +115,3 @@ public abstract class WirelessTerminalItemMixin {
         }
     }
 }
-

@@ -18,6 +18,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(MetronomePortBlockEntity::new, ModBlocks.METRONOME_PORT.get()).build(null)
             );
 
+    public static final Supplier<BlockEntityType<ChrononAcceleratorBlockEntity>> CHRONON_ACCELERATOR = 
+            BLOCK_ENTITIES.register("chronon_accelerator", () -> 
+                    BlockEntityType.Builder.of(ChrononAcceleratorBlockEntity::new, ModBlocks.CHRONON_ACCELERATOR.get()).build(null)
+            );
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

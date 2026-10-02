@@ -20,6 +20,7 @@ public class ModCreativeModeTabs {
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.CHRONON_WAND.get());
                         output.accept(ModBlocks.METRONOME_PORT_ITEM.get());
+                        output.accept(ModBlocks.CHRONON_ACCELERATOR_ITEM.get());
                         output.accept(ModItems.CHRONON_CELL_HOUSING.get());
                         for (var cellHolder : ModItems.CHRONON_CELLS.values()) {
                             output.accept(cellHolder.get());
