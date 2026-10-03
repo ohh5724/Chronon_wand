@@ -5,12 +5,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AcceleratorEntity extends Entity {
@@ -88,28 +86,8 @@ public class AcceleratorEntity extends Entity {
             return;
         }
 
-        for (int i = 0; i < rate - 1; i++) {
-            if (state.isRandomlyTicking()) {
-                int bound = Math.max(1, 4096 / (rate + 1));
-                if (this.level().random.nextInt(bound) == 0) {
-                    state.randomTick((ServerLevel) this.level(), pos, this.level().random);
-                    state = this.level().getBlockState(pos);
-                    if (state.isAir()) {
-                        this.discard();
-                        return;
-                    }
-                }
-            }
-
-            BlockEntity be = this.level().getBlockEntity(pos);
-            if (be != null && !be.isRemoved()) {
-                @SuppressWarnings("unchecked")
-                BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) state.getTicker(this.level(), be.getType());
-                if (ticker != null) {
-                    ticker.tick(this.level(), pos, be.getBlockState(), be);
-                }
-            }
-        }
+        BlockEntity be = this.level().getBlockEntity(pos);
+        com.ohh.chronon_wand.util.BlockTickHelper.tick(this.level(), pos, state, be, rate);
     }
 
     @Override

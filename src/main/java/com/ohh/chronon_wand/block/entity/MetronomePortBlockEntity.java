@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.ohh.chronon_wand.block.PortChannel;
 import com.ohh.chronon_wand.block.SideMode;
-import earth.terrarium.tempad.api.tva_device.impl.MultiversalChrononHandler;
 import earth.terrarium.tempad.common.block.MetronomeBe;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +32,10 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     private UUID owner;
     private int lastKnownChronons = -1;
     private int lastKnownFluid = -1;
+
+    private ChrononHandler cachedMetronome = null;
+    private boolean metronomeChecked = false;
+    private int metronomeCheckCooldown = 0;
 
     private final Map<Direction, SideMode> energySideModes = new EnumMap<>(Direction.class);
     private final Map<Direction, SideMode> fluidSideModes = new EnumMap<>(Direction.class);
@@ -192,15 +195,30 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
         }
     }
 
+    public void invalidateConnectedMetronome() {
+        this.metronomeChecked = false;
+        this.cachedMetronome = null;
+    }
+
     public ChrononHandler findConnectedMetronome() {
         if (this.level == null) {
             return null;
         }
 
-        // 1. Check physically adjacent blocks for a ChrononHandler capability
+        if (this.metronomeChecked) {
+            return this.cachedMetronome;
+        }
+
+        this.metronomeChecked = true;
+        this.cachedMetronome = null;
+
+        // Check physically adjacent blocks for a ChrononHandler capability
         for (Direction direction : Direction.values()) {
             BlockPos adjacent = this.worldPosition.relative(direction);
             if (this.level.getBlockEntity(adjacent) instanceof MetronomePortBlockEntity) {
+                continue;
+            }
+            if (this.level.getBlockEntity(adjacent) instanceof ChrononAcceleratorBlockEntity) {
                 continue;
             }
             ChrononHandler handler = this.level.getCapability(
@@ -216,14 +234,8 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
                         setChanged();
                     }
                 }
+                this.cachedMetronome = handler;
                 return handler;
-            }
-        }
-
-        // 2. If not adjacent to any Metronome block, connect to the player's Metronome network!
-        if (this.owner != null) {
-            if (!this.level.isClientSide) {
-                return new MultiversalChrononHandler(this.owner);
             }
         }
 
@@ -503,6 +515,11 @@ public class MetronomePortBlockEntity extends BlockEntity implements IFluidHandl
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MetronomePortBlockEntity port) {
+        if (++port.metronomeCheckCooldown >= 10) {
+            port.metronomeCheckCooldown = 0;
+            port.invalidateConnectedMetronome();
+        }
+
         ChrononHandler metronome = port.findConnectedMetronome();
 
         int targetCapacity = (metronome != null && metronome.getMaxPower() > 0) ? metronome.getMaxPower() : BUFFER_CAPACITY;

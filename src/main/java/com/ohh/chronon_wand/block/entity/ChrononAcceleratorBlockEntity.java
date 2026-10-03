@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -49,6 +48,15 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
     private int lastAcceleratedCount = 0;
     private boolean isTicking = false;
 
+    private ChrononHandler cachedMetronome = null;
+    private boolean metronomeChecked = false;
+    private int metronomeCheckCooldown = 0;
+
+    public void invalidateConnectedMetronome() {
+        this.metronomeChecked = false;
+        this.cachedMetronome = null;
+    }
+
     public ChrononAcceleratorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CHRONON_ACCELERATOR.get(), pos, state);
         if (state.hasProperty(ChrononAcceleratorBlock.FACING)) {
@@ -78,6 +86,13 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
             return null;
         }
 
+        if (this.metronomeChecked) {
+            return this.cachedMetronome;
+        }
+
+        this.metronomeChecked = true;
+        this.cachedMetronome = null;
+
         for (Direction direction : Direction.values()) {
             BlockPos adjacent = this.worldPosition.relative(direction);
             if (this.level.getBlockEntity(adjacent) instanceof MetronomePortBlockEntity) {
@@ -99,6 +114,7 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
                         setChanged();
                     }
                 }
+                this.cachedMetronome = handler;
                 return handler;
             }
         }
@@ -198,12 +214,6 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
             ActionType actionType = action.execute() ? ActionType.Execute : ActionType.Simulate;
             int inserted = metronome.insert(toFill, actionType);
             if (action.execute() && inserted > 0) {
-                int newPower = metronome.getPower();
-                if (newPower > 0) {
-                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
-                } else {
-                    this.buffer.setFluid(FluidStack.EMPTY);
-                }
                 setChanged();
                 if (this.level != null && !this.level.isClientSide) {
                     this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
@@ -244,12 +254,6 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
                 return FluidStack.EMPTY;
             }
             if (action.execute()) {
-                int newPower = metronome.getPower();
-                if (newPower > 0) {
-                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
-                } else {
-                    this.buffer.setFluid(FluidStack.EMPTY);
-                }
                 setChanged();
                 if (this.level != null && !this.level.isClientSide) {
                     this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
@@ -299,12 +303,6 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
         if (metronome != null && metronome.getMaxPower() > 0) {
             int inserted = metronome.insert(amount, action);
             if (action == ActionType.Execute && inserted > 0) {
-                int newPower = metronome.getPower();
-                if (newPower > 0) {
-                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
-                } else {
-                    this.buffer.setFluid(FluidStack.EMPTY);
-                }
                 setChanged();
                 if (this.level != null && !this.level.isClientSide) {
                     this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
@@ -334,12 +332,6 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
         if (metronome != null && metronome.getMaxPower() > 0) {
             int extracted = metronome.extract(maxDrain, action);
             if (action == ActionType.Execute && extracted > 0) {
-                int newPower = metronome.getPower();
-                if (newPower > 0) {
-                    this.buffer.setFluid(new FluidStack(ModFluids.CHRONON_FLUID_SOURCE.get(), newPower));
-                } else {
-                    this.buffer.setFluid(FluidStack.EMPTY);
-                }
                 setChanged();
                 if (this.level != null && !this.level.isClientSide) {
                     this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 2);
@@ -387,6 +379,11 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
         if (blockEntity.isTicking) return;
         blockEntity.isTicking = true;
         try {
+            if (++blockEntity.metronomeCheckCooldown >= 10) {
+                blockEntity.metronomeCheckCooldown = 0;
+                blockEntity.invalidateConnectedMetronome();
+            }
+
             if (blockEntity.redstoneMode == 1 && level.hasNeighborSignal(pos)) return;
             if (blockEntity.redstoneMode == 2 && !level.hasNeighborSignal(pos)) return;
 
@@ -404,23 +401,17 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
                 BlockState s = level.getBlockState(p);
                 if (s.isAir()) continue;
                 
-                boolean acceleratable = false;
-                if (s.isRandomlyTicking()) {
-                    acceleratable = true;
-                } else {
-                    BlockEntity be = level.getBlockEntity(p);
-                    if (be != null && !be.isRemoved() && !(be instanceof ChrononAcceleratorBlockEntity)) {
-                        BlockEntityTicker<?> ticker = s.getTicker(level, be.getType());
-                        if (ticker != null) {
-                            acceleratable = true;
-                        }
-                    }
+                BlockEntity be = level.getBlockEntity(p);
+                if (be instanceof ChrononAcceleratorBlockEntity) continue;
+
+                if (com.ohh.chronon_wand.util.BlockTickHelper.isAcceleratable(level, p, s, be)) {
+                    blockCount++;
                 }
-                if (acceleratable) blockCount++;
             }
 
             if (blockCount == 0) {
                 blockEntity.lastAcceleratedCount = 0;
+                blockEntity.chrononAccumulator = 0;
                 return;
             }
 
@@ -428,27 +419,30 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
             int currentPower = (metronome != null && metronome.getMaxPower() > 0) ? metronome.getPower() : blockEntity.buffer.getFluidAmount();
             if (currentPower <= 0) {
                 blockEntity.lastAcceleratedCount = 0;
+                blockEntity.chrononAccumulator = 0;
                 return;
             }
 
             double costPerTick = (costPerSec * blockCount) / 20.0;
-            blockEntity.chrononAccumulator += costPerTick;
+            double nextAccumulator = blockEntity.chrononAccumulator + costPerTick;
+            int toConsume = (int) nextAccumulator;
 
-            if (blockEntity.chrononAccumulator >= 1.0) {
-                int toConsume = (int) blockEntity.chrononAccumulator;
-                
+            if (toConsume > 0) {
                 if (currentPower < toConsume) {
                     blockEntity.lastAcceleratedCount = 0;
+                    blockEntity.chrononAccumulator = 0;
                     return;
                 }
-                
+
                 if (metronome != null && metronome.getMaxPower() > 0) {
                     metronome.extract(toConsume, ActionType.Execute);
                 } else {
                     blockEntity.buffer.drain(toConsume, FluidAction.EXECUTE);
                 }
-                
-                blockEntity.chrononAccumulator -= toConsume;
+
+                blockEntity.chrononAccumulator = nextAccumulator - toConsume;
+            } else {
+                blockEntity.chrononAccumulator = nextAccumulator;
             }
 
             for (BlockPos p : BlockPos.betweenClosed(minBlockPos, maxBlockPos)) {
@@ -456,27 +450,10 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
                 BlockState s = level.getBlockState(p);
                 if (s.isAir()) continue;
 
-                for (int i = 0; i < rate - 1; i++) {
-                    if (s.isRandomlyTicking()) {
-                        int bound = Math.max(1, 4096 / (rate + 1));
-                        if (level.random.nextInt(bound) == 0) {
-                            if (level instanceof net.minecraft.server.level.ServerLevel sl) {
-                                s.randomTick(sl, p.immutable(), level.random);
-                                s = level.getBlockState(p);
-                                if (s.isAir()) break;
-                            }
-                        }
-                    }
+                BlockEntity be = level.getBlockEntity(p);
+                if (be instanceof ChrononAcceleratorBlockEntity) continue;
 
-                    BlockEntity be = level.getBlockEntity(p);
-                    if (be != null && !be.isRemoved() && !(be instanceof ChrononAcceleratorBlockEntity)) {
-                        @SuppressWarnings("unchecked")
-                        BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) s.getTicker(level, be.getType());
-                        if (ticker != null) {
-                            ticker.tick(level, p.immutable(), s, be);
-                        }
-                    }
-                }
+                com.ohh.chronon_wand.util.BlockTickHelper.tick(level, p, s, be, rate);
             }
             
             blockEntity.lastAcceleratedCount = blockCount;

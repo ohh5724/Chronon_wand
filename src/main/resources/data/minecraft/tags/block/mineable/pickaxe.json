@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "chronon_wand:metronome_port"
+    "chronon_wand:metronome_port",
+    "chronon_wand:chronon_accelerator"
   ]
 }

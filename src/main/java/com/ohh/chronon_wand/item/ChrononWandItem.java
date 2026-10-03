@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
@@ -31,7 +32,13 @@ public class ChrononWandItem extends Item {
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
 
-        if (level.getBlockState(pos).is(com.ohh.chronon_wand.ModBlocks.METRONOME_PORT.get())) {
+        BlockState targetState = level.getBlockState(pos);
+        if (targetState.is(com.ohh.chronon_wand.ModBlocks.METRONOME_PORT.get()) ||
+            targetState.is(com.ohh.chronon_wand.ModBlocks.CHRONON_ACCELERATOR.get())) {
+            return InteractionResult.PASS;
+        }
+
+        if (!com.ohh.chronon_wand.util.BlockTickHelper.isAcceleratable(level, pos, targetState, level.getBlockEntity(pos))) {
             return InteractionResult.PASS;
         }
 

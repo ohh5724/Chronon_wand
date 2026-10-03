@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "chronon_wand:chronon_accelerator",
+    "chronon_wand:metronome_port"
+  ]
+}

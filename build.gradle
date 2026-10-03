@@ -214,6 +214,35 @@ tasks.named('build') {
     finalizedBy 'copyJarToPrism'
 }
 
+def atm10ModsDir = file("E:\\Games\\PrismLauncher\\instances\\All the Mods 10 Aeronautics\\minecraft\\mods")
+
+tasks.register('copyJarToAtm10', Copy) {
+    group = 'mod development'
+    description = 'Copies the compiled mod JAR to the ATM10 Aeronautics instance mods folder.'
+
+    // Always execute copy
+    outputs.upToDateWhen { false }
+
+    // Take the output JAR produced by the jar task
+    from tasks.named('jar')
+    into atm10ModsDir
+
+    // Remove older versions of this mod from the destination to avoid duplicate JAR crashes
+    doFirst {
+        if (atm10ModsDir.exists()) {
+            atm10ModsDir.listFiles()?.each { file ->
+                if (file.name.startsWith(modId) && file.name.endsWith('.jar')) {
+                    file.delete()
+                }
+            }
+        }
+    }
+}
+
+tasks.named('build') {
+    finalizedBy 'copyJarToAtm10'
+}
+
 def BuildsDir = file("E:\\Owen\\Projects\\Mods\\Chronon_wand\\builds")
 
 tasks.register('copyJarToBuilds', Copy) {
