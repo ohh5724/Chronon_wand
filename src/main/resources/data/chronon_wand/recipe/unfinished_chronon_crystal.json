@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tempad"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "justdirethings"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "tempad:time_steel"
+    },
+    "C": {
+      "item": "justdirethings:time_crystal"
+    },
+    "T": {
+      "item": "tempad:time_twister"
+    }
+  },
+  "pattern": [
+    "SCS",
+    "CTC",
+    "SCS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:unfinished_chronon_crystal"
+  }
+}

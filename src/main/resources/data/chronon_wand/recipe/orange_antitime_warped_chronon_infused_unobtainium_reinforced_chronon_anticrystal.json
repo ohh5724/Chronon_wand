@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "chronon_wand:antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal"
+    },
+    {
+      "item": "minecraft:orange_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:orange_antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal"
+  }
+}

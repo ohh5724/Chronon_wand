@@ -11,8 +11,9 @@ public class ChrononWand {
     public static final String MODID = MOD_ID;
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public ChrononWand(IEventBus modEventBus) {
+    public ChrononWand(IEventBus modEventBus, net.neoforged.fml.ModContainer container) {
         com.ohh.chronon_wand.config.ChrononWandConfig.load();
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, com.ohh.chronon_wand.config.ChrononWandServerConfig.SPEC);
 
         com.ohh.chronon_wand.fluid.ModFluids.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -20,8 +21,16 @@ public class ChrononWand {
         ModItems.ITEMS.register(modEventBus);
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.register(modEventBus);
+        com.ohh.chronon_wand.recipe.ModRecipeConditions.register(modEventBus);
         com.ohh.chronon_wand.entity.ModEntities.register(modEventBus);
         com.ohh.chronon_wand.menu.ModMenus.register(modEventBus);
+
+        if (net.neoforged.fml.ModList.get().isLoaded("mekanism")) {
+            com.ohh.chronon_wand.compat.mekanism.MekanismCompat.register(modEventBus);
+        }
+        if (net.neoforged.fml.ModList.get().isLoaded("pneumaticcraft")) {
+            com.ohh.chronon_wand.compat.pneumaticcraft.PneumaticCraftCompat.register(modEventBus);
+        }
 
         modEventBus.addListener(this::onRegister);
         modEventBus.addListener(this::commonSetup);

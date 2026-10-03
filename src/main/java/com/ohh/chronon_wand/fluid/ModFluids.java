@@ -39,6 +39,29 @@ public class ModFluids {
             CHRONON_FLUID_FLOWING
     ).block(() -> ModBlocks.CHRONON_FLUID_BLOCK.get());
 
+    public static final Supplier<FluidType> ANTITIME_FLUID_TYPE = FLUID_TYPES.register("antitime_fluid", () -> new FluidType(
+            FluidType.Properties.create()
+                    .density(2000)
+                    .viscosity(2000)
+                    .temperature(1)
+                    .lightLevel(5)
+                    .descriptionId("fluid_type.chronon_wand.antitime_fluid")
+    ));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ANTITIME_FLUID_SOURCE = FLUIDS.register("antitime_fluid", () ->
+            new BaseFlowingFluid.Source(ModFluids.ANTITIME_FLUID_PROPERTIES)
+    );
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> ANTITIME_FLUID_FLOWING = FLUIDS.register("flowing_antitime_fluid", () ->
+            new BaseFlowingFluid.Flowing(ModFluids.ANTITIME_FLUID_PROPERTIES)
+    );
+
+    public static final BaseFlowingFluid.Properties ANTITIME_FLUID_PROPERTIES = new BaseFlowingFluid.Properties(
+            ANTITIME_FLUID_TYPE,
+            ANTITIME_FLUID_SOURCE,
+            ANTITIME_FLUID_FLOWING
+    ).block(() -> ModBlocks.ANTITIME_FLUID_BLOCK.get()).bucket(() -> com.ohh.chronon_wand.ModItems.ANTITIME_FLUID_BUCKET.get());
+
     public static void register(IEventBus eventBus) {
         FLUID_TYPES.register(eventBus);
         FLUIDS.register(eventBus);

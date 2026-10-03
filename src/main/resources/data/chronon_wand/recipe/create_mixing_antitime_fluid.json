@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "justdirethings"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "amount": 2000,
+      "fluid": "justdirethings:time_fluid_source"
+    },
+    {
+      "amount": 1,
+      "fluid": "mekanism:antimatter"
+    }
+  ],
+  "results": [
+    {
+      "amount": 2,
+      "fluid": "chronon_wand:antitime_fluid"
+    }
+  ]
+}

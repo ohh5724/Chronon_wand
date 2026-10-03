@@ -50,6 +50,14 @@ public class ModBlocks {
             )
     );
 
+    public static final DeferredBlock<LiquidBlock> ANTITIME_FLUID_BLOCK = BLOCKS.register(
+            "antitime_fluid_block",
+            () -> new LiquidBlock(
+                    ModFluids.ANTITIME_FLUID_SOURCE.get(),
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable()
+            )
+    );
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

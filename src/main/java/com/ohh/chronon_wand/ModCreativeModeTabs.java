@@ -25,6 +25,13 @@ public class ModCreativeModeTabs {
                         for (var cellHolder : ModItems.CHRONON_CELLS.values()) {
                             output.accept(cellHolder.get());
                         }
+                        output.accept(ModItems.UNFINISHED_CHRONON_CRYSTAL.get());
+                        output.accept(ModItems.CHRONON_INFUSED_CHRONON_CRYSTAL.get());
+                        output.accept(ModItems.CHRONON_INFUSED_CHRONON_ANTICRYSTAL.get());
+                        output.accept(ModItems.ANTITIME_WARPED_CHRONON_INFUSED_CHRONON_ANTICRYSTAL.get());
+                        output.accept(ModItems.ANTITIME_WARPED_CHRONON_INFUSED_UNOBTAINIUM_REINFORCED_CHRONON_ANTICRYSTAL.get());
+                        output.accept(ModItems.ORANGE_ANTITIME_WARPED_CHRONON_INFUSED_UNOBTAINIUM_REINFORCED_CHRONON_ANTICRYSTAL.get());
+                        output.accept(ModItems.ANTITIME_FLUID_BUCKET.get());
                     })
                     .build());
 

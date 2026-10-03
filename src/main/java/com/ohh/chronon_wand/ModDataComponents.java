@@ -14,6 +14,10 @@ public class ModDataComponents {
             DataComponentType.<Integer>builder().persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT).build()
     );
 
+    public static final Supplier<DataComponentType<Integer>> PROCESS_COUNT = DATA_COMPONENTS.register("process_count", () ->
+            DataComponentType.<Integer>builder().persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT).build()
+    );
+
     public static void register(IEventBus bus) {
         DATA_COMPONENTS.register(bus);
     }

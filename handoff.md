@@ -6,7 +6,7 @@
 - **Mod Name**: Chronon Wand
 - **Mod ID**: `chronon_wand`
 - **Environment**: NeoForge 21.1.250 for Minecraft 1.21.1, Java 21
-- **Current Version**: `1.7.2` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
+- **Current Version**: `1.8.0` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
 - **Workspace Location**: `e:\Owen\Projects\Mods\Chronon_wand`
 - **Prism Launcher Test Instances**:
   1. `E:\Games\PrismLauncher\instances\Chronon wand\minecraft\`
@@ -38,6 +38,23 @@
      - `#chronon_wand:acceleration_deny`
      - `#justdirethings:tick_speed_deny`
      - `#tiab:un_acceleratable`
+4. **Chronon Crystal Progression System (Option B Automation)**:
+   - Full progression line implemented based on `Chronon crystal plans.xlsx`:
+     1. `unfinished_chronon_crystal`: Crafted via Create Mechanical Crafter (center: `tempad:time_twister`).
+     2. `chronon_infused_chronon_crystal`: 69,420 cycles in Mekanism Metallurgic Infuser (1,500 mB Chronon chemical per cycle).
+     3. `chronon_infused_chronon_anticrystal`: 1,001 cycles in Mekanism Nucleosynthesizer (1 mB Antimatter chemical per cycle).
+     4. `antitime_fluid`: Created in Create Mechanical Mixer from 2,000 mB JDT Time Fluid + 1 mB Mekanism Antimatter fluid.
+     5. `antitime_warped_chronon_infused_chronon_anticrystal`: 70 cycles in PneumaticCraft Thermo Plant with Antitime Fluid at $\le 100\text{ K}$ (2 mB per cycle).
+     6. `antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal`: Upgraded via Smithing Table with Unobtainium Ingot.
+     7. `orange_antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal`: Dyed with Orange Dye in Crafting Table.
+     8. `chronon_wand`: Crafted using the Orange Reinforced Crystal + Unobtainium Rods + Netherite Ingot.
+   - **Progress Tracking**: Tracked on item stacks via `chronon_wand:process_count` Data Component. Displays a color-coded durability bar and hover tooltip showing `Current / Target (XX.X%)`.
+   - **Custom Serializers**:
+     - `chronon_wand:progressive_metallurgic_infusing`
+     - `chronon_wand:progressive_nucleosynthesizing`
+     - `chronon_wand:progressive_thermo_plant`
+   - **Mekanism Chronon Chemical**: Registered via `MekanismCompat` and convertible 1:1 with `chronon_fluid` via Rotary Condensentrator (`chronon_wand:chronon_rotary`).
+   - **Config Toggle**: Configurable in `chronon_wand-server.toml` under `enable_progression_recipes` (defaults to `true`). Recipes use condition serializer `chronon_wand:recipes_enabled`. A warning informs players that changing the setting requires a server restart.
 
 ---
 
@@ -77,6 +94,18 @@
 - **Stalling Fix**: Pre-checked power consumption against `nextAccumulator` so unfulfilled ticks don't accumulate into unattainable deficits.
 - **Neighbor Caching**: Cached adjacent metronome lookup in both `ChrononAcceleratorBlockEntity` and `MetronomePortBlockEntity`, invalidated on neighbor block updates or every 10 ticks.
 
+### Milestone 6: Chronon Crystal Progression System (v1.8.0)
+- **Progression Plan Execution**: Implemented the complete progression line from `Chronon crystal plans.xlsx`.
+- **Option B Automation Logic**: Crystals hold their process count in `chronon_wand:process_count`. Multi-cycle recipes loop items through standard automation conduits until target is reached and transforms into the next stage crystal.
+- **Custom Compat Recipe Types**:
+  - `ProgressiveMetallurgicInfuserRecipe` subclassing Mekanism's `ItemStackChemicalToItemStackRecipe`.
+  - `ProgressiveNucleosynthesizingRecipe` subclassing Mekanism's `NucleosynthesizingRecipe`.
+  - `ProgressiveThermoPlantRecipe` subclassing PneumaticCraft's `ThermoPlantRecipe`.
+- **Fluid & Bucket Support**: Added `antitime_fluid` (source, flowing, fluid type, block) and `antitime_fluid_bucket`. Registered client extensions with deep cosmic violet tint (`0xFF351052`).
+- **Item Models & Textures**: Created 16x16 pixel-accurate textures matching mod aesthetics for all 6 crystals and `antitime_fluid_bucket`.
+- **Localizations**: Complete English localization for all items, fluids, chemical, blocks, and progress tooltips.
+- **Dual-Instance Deployment**: Compiled and copied `chronon_wand-1.8.0.jar` to both Prism test instances and `builds/`.
+
 ---
 
 ## 3. Strict Rules & Operational Constraints
@@ -91,8 +120,8 @@
      - `E:\Games\PrismLauncher\instances\All the Mods 10 Aeronautics\minecraft\mods\`
    - Delete old `chronon_wand-*.jar` versions from those directories when deploying new versions.
 3. **Soft Dependencies**:
-   - Never import AE2 classes directly into non-compat classes. Use reflection or isolation in `com.ohh.chronon_wand.compat.ae2.*` and `compat/AE2TickHelper.java` guarded by `ModList.get().isLoaded("ae2")`.
-4. **Git**
+   - Never import AE2, Mekanism, or PneumaticCraft classes directly into non-compat classes. Use reflection or isolation in `com.ohh.chronon_wand.compat.*` guarded by `ModList.get().isLoaded(...)`.
+4. **Git**:
    - Don't commit changes to git, let the user do that.
 
 ---
@@ -107,9 +136,13 @@
 | [`MetronomePortBlockEntity.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/block/entity/MetronomePortBlockEntity.java) | Metronome Port logic, physical-only connection, side config |
 | [`ChrononAcceleratorMenu.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/menu/ChrononAcceleratorMenu.java) | Container menu & data slots |
 | [`ChrononAcceleratorScreen.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/client/screen/ChrononAcceleratorScreen.java) | Custom GUI screen |
-| [`ChrononAcceleratorRenderer.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/client/renderer/ChrononAcceleratorRenderer.java) | Client-side 3D bounding box renderer |
-| [`ChrononRenderTypes.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/client/renderer/ChrononRenderTypes.java) | Custom `RenderType` without depth-writing for translucent boxes |
-| [`AcceleratorSettingsPayload.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/network/AcceleratorSettingsPayload.java) | C2S network packet for syncing GUI settings to server |
+| [`ProgressiveCrystalItem.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/item/ProgressiveCrystalItem.java) | Multi-cycle crystal item with dynamic durability bar and hover tooltip |
+| [`ProgressiveMetallurgicInfuserRecipe.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/mekanism/ProgressiveMetallurgicInfuserRecipe.java) | Custom Mekanism Infuser recipe handling incremental crystal progress |
+| [`ProgressiveNucleosynthesizingRecipe.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/mekanism/ProgressiveNucleosynthesizingRecipe.java) | Custom Mekanism Nucleosynthesizer recipe handling incremental crystal progress |
+| [`ProgressiveThermoPlantRecipe.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/pneumaticcraft/ProgressiveThermoPlantRecipe.java) | Custom PNC Thermo Plant recipe handling incremental crystal progress |
+| [`ChrononWandServerConfig.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/config/ChrononWandServerConfig.java) | Server config with `enable_progression_recipes` toggle |
+| [`RecipesEnabledCondition.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/recipe/condition/RecipesEnabledCondition.java) | NeoForge recipe condition checking config toggle |
+| [`ModFluids.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/fluid/ModFluids.java) | `chronon_fluid` and `antitime_fluid` registrations |
 | [`BlockTickHelper.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/util/BlockTickHelper.java) | Universal block & entity tick dispatcher with deny tags support |
 | [`AE2TickHelper.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/AE2TickHelper.java) | Soft AE2 machine acceleration delegate |
 | [`AE2TickHandler.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/ae2/AE2TickHandler.java) | Direct AE2 grid machine ticking implementation |
@@ -119,8 +152,8 @@
 
 ## 5. Next Steps & Potential Future Work
 
-1. **Verify In-Game Behavior**:
-   - Verify that AE2 machines (inscribers, molecular assemblers, growth accelerators, chargers, vibration chambers) advance faster when accelerated by either the Wand or the Chronon Accelerator.
-   - Verify that Metronome Port and Chronon Accelerator properly draw power exclusively from adjacent Metronomes or fluid buffer pipes, and not wirelessly.
-2. **Pending User Requests**:
-   - Monitor `to_import/plan.txt` or `to_import/changes.txt` for crafting recipe implementations or future feature adjustments.
+1. **In-Game Testing**:
+   - Test cycling crystals through Mekanism Metallurgic Infuser, Mekanism Nucleosynthesizer, and PNC Thermo Plant with item pipes.
+   - Verify that progress bar and hover tooltip update smoothly on each cycle and transform when reaching target count.
+   - Test `enable_progression_recipes = false` in `chronon_wand-server.toml` to verify recipe disabling.
+

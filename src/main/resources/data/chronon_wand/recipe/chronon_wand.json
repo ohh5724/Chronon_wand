@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tempad"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "chronon_wand:orange_antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal"
+    },
+    "T": {
+      "item": "tempad:time_steel"
+    }
+  },
+  "pattern": [
+    "  C",
+    " T ",
+    "T  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "chronon_wand:chronon_wand"
+  }
+}

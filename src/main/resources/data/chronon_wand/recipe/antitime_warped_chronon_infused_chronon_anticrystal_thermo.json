@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "pneumaticcraft"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "chronon_wand:progressive_thermo_plant",
+  "inputs": {
+    "fluid": {
+      "amount": 2,
+      "id": "chronon_wand:antitime_fluid"
+    },
+    "item": {
+      "item": "chronon_wand:chronon_infused_chronon_anticrystal"
+    }
+  },
+  "outputs": {
+    "outputItem": {
+      "count": 1,
+      "id": "chronon_wand:chronon_infused_chronon_anticrystal"
+    }
+  },
+  "temperature": {
+    "max": 100
+  },
+  "pressure": 0.0,
+  "speed": 1.0,
+  "air_use_multiplier": 1.0,
+  "exothermic": false,
+  "target_output": {
+    "count": 1,
+    "id": "chronon_wand:antitime_warped_chronon_infused_chronon_anticrystal"
+  },
+  "target_count": 70
+}

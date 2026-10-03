@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "chronon_wand:progressive_metallurgic_infusing",
+  "item_input": {
+    "count": 1,
+    "item": "chronon_wand:unfinished_chronon_crystal"
+  },
+  "chemical_input": {
+    "amount": 1500,
+    "chemical": "chronon_wand:chronon"
+  },
+  "intermediate_output": {
+    "count": 1,
+    "id": "chronon_wand:unfinished_chronon_crystal"
+  },
+  "target_output": {
+    "count": 1,
+    "id": "chronon_wand:chronon_infused_chronon_crystal"
+  },
+  "target_count": 69420
+}

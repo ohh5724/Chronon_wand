@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "mekanism:rotary",
+  "chemical_input": {
+    "amount": 1,
+    "chemical": "chronon_wand:chronon"
+  },
+  "chemical_output": {
+    "amount": 1,
+    "id": "chronon_wand:chronon"
+  },
+  "fluid_input": {
+    "amount": 1,
+    "fluid": "chronon_wand:chronon_fluid"
+  },
+  "fluid_output": {
+    "amount": 1,
+    "id": "chronon_wand:chronon_fluid"
+  }
+}

@@ -126,6 +126,11 @@ dependencies {
         "appliedenergistics2-*.jar",
         "ae2importexportcard-*.jar"
     ])
+
+    compileOnly fileTree(dir: "E:/Games/PrismLauncher/instances/Chronon wand/minecraft/mods", include: [
+        "Mekanism-*.jar",
+        "pneumaticcraft-*.jar"
+    ])
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

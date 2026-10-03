@@ -75,5 +75,18 @@
   "gui.chronon_wand.accelerator.status.accelerating": "Accelerating %s blocks",
   "gui.chronon_wand.accelerator.status.idle": "Idle",
   "gui.chronon_wand.accelerator.status.no_power": "No Power",
-  "gui.chronon_wand.accelerator.chronons": "Chronons: %s / %s"
+  "gui.chronon_wand.accelerator.chronons": "Chronons: %s / %s",
+  "item.chronon_wand.unfinished_chronon_crystal": "Unfinished Chronon Crystal",
+  "item.chronon_wand.chronon_infused_chronon_crystal": "Chronon-Infused Chronon Crystal",
+  "item.chronon_wand.chronon_infused_chronon_anticrystal": "Chronon-Infused Chronon Anticrystal",
+  "item.chronon_wand.antitime_warped_chronon_infused_chronon_anticrystal": "Antitime-Warped Chronon-Infused Chronon Anticrystal",
+  "item.chronon_wand.antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal": "Antitime-Warped Chronon-Infused Unobtainium-Reinforced Chronon Anticrystal",
+  "item.chronon_wand.orange_antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal": "Orange Antitime-Warped Chronon-Infused Unobtainium-Reinforced Chronon Anticrystal",
+  "item.chronon_wand.antitime_fluid_bucket": "Antitime Fluid Bucket",
+  "fluid_type.chronon_wand.antitime_fluid": "Antitime Fluid",
+  "block.chronon_wand.antitime_fluid_block": "Antitime Fluid",
+  "chemical.chronon_wand.chronon": "Chronon",
+  "tooltip.chronon_wand.chronon_infusion": "Chronon Infusion: %s / %s (%s)",
+  "tooltip.chronon_wand.nucleosynthesis": "Antimatter Nucleosynthesis: %s / %s (%s)",
+  "tooltip.chronon_wand.antitime_warping": "Antitime Warping: %s / %s (%s)"
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "chronon_wand:item/orange_antitime_warped_chronon_infused_unobtainium_reinforced_chronon_anticrystal"
+  }
+}

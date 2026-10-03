@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "chronon_wand:recipes_enabled"
+    }
+  ],
+  "type": "chronon_wand:progressive_nucleosynthesizing",
+  "item_input": {
+    "count": 1,
+    "item": "chronon_wand:chronon_infused_chronon_crystal"
+  },
+  "chemical_input": {
+    "amount": 1,
+    "chemical": "mekanism:antimatter"
+  },
+  "intermediate_output": {
+    "count": 1,
+    "id": "chronon_wand:chronon_infused_chronon_crystal"
+  },
+  "target_output": {
+    "count": 1,
+    "id": "chronon_wand:chronon_infused_chronon_anticrystal"
+  },
+  "duration": 20,
+  "target_count": 1001
+}
