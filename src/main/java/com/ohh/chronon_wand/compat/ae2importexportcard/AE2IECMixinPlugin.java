@@ -12,6 +12,7 @@ import java.util.Set;
 public class AE2IECMixinPlugin implements IMixinConfigPlugin {
     private static final String TARGET_MOD_ID = "ae2importexportcard";
     private boolean isLoaded;
+    private boolean isLegacy;
     private boolean isModern;
 
     @Override
@@ -22,7 +23,15 @@ public class AE2IECMixinPlugin implements IMixinConfigPlugin {
                 ModFileInfo info = modList.getModFileById(TARGET_MOD_ID);
                 if (info != null) {
                     this.isLoaded = true;
-                    this.isModern = isVersionAtLeast1_9(info.versionString());
+                    int[] ver = parseVersion(info.versionString());
+                    int major = ver[0];
+                    int minor = ver[1];
+                    if (major > 1 || (major == 1 && minor >= 9)) {
+                        this.isModern = true;
+                    } else if (major == 1 && minor >= 7) {
+                        this.isLegacy = true;
+                    }
+                    // For versions < 1.7.0 (e.g. 1.4.3), slot methods do not exist, so neither mixin is applied
                 }
             }
         } catch (Throwable ignored) {
@@ -30,19 +39,19 @@ public class AE2IECMixinPlugin implements IMixinConfigPlugin {
         }
     }
 
-    private static boolean isVersionAtLeast1_9(String version) {
-        if (version == null) return false;
-        int dash = version.indexOf('-');
-        String ver = dash >= 0 ? version.substring(dash + 1) : version;
+    private static int[] parseVersion(String version) {
+        if (version == null) return new int[]{0, 0, 0};
+        int lastDash = version.lastIndexOf('-');
+        String ver = lastDash >= 0 ? version.substring(lastDash + 1) : version;
         String[] parts = ver.split("\\.");
         try {
-            int major = Integer.parseInt(parts[0]);
+            int major = Integer.parseInt(parts[0].replaceAll("[^0-9]", ""));
             int minor = parts.length > 1 ? Integer.parseInt(parts[1].replaceAll("[^0-9]", "")) : 0;
-            if (major > 1) return true;
-            if (major == 1 && minor >= 9) return true;
+            int patch = parts.length > 2 ? Integer.parseInt(parts[2].replaceAll("[^0-9]", "")) : 0;
+            return new int[]{major, minor, patch};
         } catch (Exception ignored) {
+            return new int[]{0, 0, 0};
         }
-        return false;
     }
 
     @Override
@@ -59,9 +68,9 @@ public class AE2IECMixinPlugin implements IMixinConfigPlugin {
             return this.isModern;
         }
         if (mixinClassName.endsWith("WirelessTerminalItemLegacyMixin")) {
-            return !this.isModern;
+            return this.isLegacy;
         }
-        return true;
+        return false;
     }
 
     @Override

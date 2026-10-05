@@ -17,7 +17,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,14 +28,6 @@ import java.util.function.Consumer;
  */
 @Mixin(value = WirelessTerminalItem.class, priority = 1100)
 public abstract class WirelessTerminalItemModernMixin {
-
-    @Dynamic
-    @Shadow(remap = false)
-    private void ae2ImportExportCard$requestCraftingIfPossible(
-            Level level, IGrid grid, AEKey key, int amount, IUpgradeInventory upgrades
-    ) {
-        throw new AssertionError();
-    }
 
     @Dynamic
     @Inject(
@@ -112,7 +103,12 @@ public abstract class WirelessTerminalItemModernMixin {
 
             if (!exported) {
                 try {
-                    this.ae2ImportExportCard$requestCraftingIfPossible(level, grid, key, (int) rate, upgrades);
+                    java.lang.reflect.Method m = this.getClass().getDeclaredMethod(
+                            "ae2ImportExportCard$requestCraftingIfPossible",
+                            Level.class, IGrid.class, AEKey.class, int.class, IUpgradeInventory.class
+                    );
+                    m.setAccessible(true);
+                    m.invoke(this, level, grid, key, (int) rate, upgrades);
                 } catch (Throwable ignored) {
                 }
             }
