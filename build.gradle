@@ -248,6 +248,7 @@ tasks.named('build') {
     finalizedBy 'copyJarToAtm10'
 }
 
+
 def BuildsDir = file("E:\\Owen\\Projects\\Mods\\Chronon_wand\\builds")
 
 tasks.register('copyJarToBuilds', Copy) {
@@ -258,13 +259,17 @@ tasks.register('copyJarToBuilds', Copy) {
     outputs.upToDateWhen { false }
 
     // Take the output JAR produced by the jar task
-    from tasks.named('jar')
+    def jarTask = tasks.named('jar', Jar)
+    from jarTask
     into BuildsDir
+
+    def targetJarName = jarTask.flatMap { it.archiveFileName }
 
     doFirst {
         if (BuildsDir.exists()) {
+            def nameToDelete = targetJarName.get()
             BuildsDir.listFiles()?.each { file ->
-                if (file.name.startsWith(modId) && file.name.endsWith('.jar')) {
+                if (file.name == nameToDelete) {
                     file.delete()
                 }
             }

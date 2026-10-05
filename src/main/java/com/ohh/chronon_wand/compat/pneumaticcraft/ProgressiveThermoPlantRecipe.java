@@ -39,6 +39,8 @@ public class ProgressiveThermoPlantRecipe extends ThermoPlantRecipeImpl {
         boolean match = super.matches(fluid, item);
         if (match) {
             this.lastTestedItem = item.copy();
+        } else {
+            this.lastTestedItem = ItemStack.EMPTY;
         }
         return match;
     }
@@ -55,7 +57,22 @@ public class ProgressiveThermoPlantRecipe extends ThermoPlantRecipeImpl {
                 return result;
             }
         }
-        return intermediateOutput.copy();
+        return targetOutput.copy();
+    }
+
+    @Override
+    public ItemStack getResultItem(net.minecraft.core.HolderLookup.Provider registries) {
+        return targetOutput.copy();
+    }
+
+    @Override
+    public ItemStack assemble(net.minecraft.world.item.crafting.CraftingInput input, net.minecraft.core.HolderLookup.Provider registries) {
+        return targetOutput.copy();
+    }
+
+    @Override
+    public String getGroup() {
+        return "pneumaticcraft:thermo_plant";
     }
 
     @Override

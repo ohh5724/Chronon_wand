@@ -14,7 +14,7 @@
     "item": "chronon_wand:unfinished_chronon_crystal"
   },
   "chemical_input": {
-    "amount": 1500,
+    "amount": 1000,
     "chemical": "chronon_wand:chronon"
   },
   "intermediate_output": {

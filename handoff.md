@@ -5,12 +5,13 @@
 ### About the Project
 - **Mod Name**: Chronon Wand
 - **Mod ID**: `chronon_wand`
-- **Environment**: NeoForge 21.1.250 for Minecraft 1.21.1, Java 21
-- **Current Version**: `1.8.0` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
+- **Environment**: NeoForge 21.1.228+ for Minecraft 1.21.1, Java 21
+- **Current Version**: `2.0.0` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
 - **Workspace Location**: `e:\Owen\Projects\Mods\Chronon_wand`
 - **Prism Launcher Test Instances**:
   1. `E:\Games\PrismLauncher\instances\Chronon wand\minecraft\`
   2. `E:\Games\PrismLauncher\instances\All the Mods 10 Aeronautics\minecraft\`
+  3. `E:\Games\PrismLauncher\instances\ATM10SKY Aeronautics\minecraft\`
 
 ### Current Architecture & Mechanics
 1. **Chronon Power System**:
@@ -106,6 +107,18 @@
 - **Localizations**: Complete English localization for all items, fluids, chemical, blocks, and progress tooltips.
 - **Dual-Instance Deployment**: Compiled and copied `chronon_wand-1.8.0.jar` to both Prism test instances and `builds/`.
 
+### Milestone 7: Compatibility Fixes & Recipe Display Refinements (v2.0.0)
+- **NeoForge 21.1.228+ Support**: Lowered minimum NeoForge dependency to `21.1.228` in `gradle.properties` and verified clean compilation.
+- **AE2 Import Export Card Compat**: Fixed hard `@Shadow` crash on `ae2importexportcard` by replacing with safe reflective invocation. Gated slot mixins in `AE2IECMixinPlugin` so versions $< 1.7.0$ (like `1.4.3`) are gracefully ignored without crashing modloading.
+- **PneumaticCraft Thermo Plant Recipe Fix**:
+  - In `antitime_warped_chronon_infused_chronon_anticrystal_thermo.json`, fixed fluid ingredient key (`"fluid"` instead of `"id"`), outputs key (`"item_output"` instead of `"outputItem"`), and specified explicit temperature range (`min: 0, max: 100`).
+  - In `ProgressiveThermoPlantRecipe.java`, updated `getOutputItem()` so static queries (JEI/EMI/REI) return the target finished crystal, while runtime queries during machine ticking return the incremented crystal until target count is reached.
+- **Metallurgic Infuser Recipe Fix**:
+  - In `ProgressiveMetallurgicInfuserRecipe.java`, overrode `getOutputDefinition()` to return `Collections.singletonList(targetOutput)` so Mekanism's JEI and EMI categories display the final output crystal.
+  - Overrode `getResultItem(HolderLookup.Provider)` to return `targetOutput.copy()` so EMI, JEI, and vanilla lookups properly index the recipe under `chronon_infused_chronon_crystal`.
+  - Overrode `getGroup()` to return `"metallurgic_infuser"`.
+- **Deployment**: Removed `ATM10SKY Aeronautics` deployment task from `build.gradle` per user request. Mod is deployed exclusively to `Chronon wand`, `All the Mods 10 Aeronautics`, and `builds/`.
+
 ---
 
 ## 3. Strict Rules & Operational Constraints
@@ -123,6 +136,18 @@
    - Never import AE2, Mekanism, or PneumaticCraft classes directly into non-compat classes. Use reflection or isolation in `com.ohh.chronon_wand.compat.*` guarded by `ModList.get().isLoaded(...)`.
 4. **Git**:
    - Don't commit changes to git, let the user do that.
+
+### Milestone 7: Recipe Viewer Compat & PNC Thermo Plant Fixes
+- **Root Cause Analysis for Recipe Visibility**:
+  1. The user was testing in the lightweight instance `Chronon wand` where only **EMI** was installed, but **JEI** was missing.
+  2. PneumaticCraft: Repressurized (PNC) does **not** have a native EMI plugin; it only provides a JEI plugin (`me.desht.pneumaticcraft.common.thirdparty.jei.JEIPlugin`).
+  3. EMI displays JEI plugins through its bridge (JEMI), which is only active when JEI itself is loaded in the instance.
+  4. In addition, [`ProgressiveThermoPlantRecipe`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/pneumaticcraft/ProgressiveThermoPlantRecipe.java) lacked an override for `getResultItem(HolderLookup.Provider registries)`. Because the PNC superclass returns `ItemStack.EMPTY`, JEI/EMI could not associate the recipe with the output item `antitime_warped_chronon_infused_chronon_anticrystal`.
+- **Fixes Applied**:
+  1. Overrode `getResultItem(HolderLookup.Provider registries)`, `assemble(CraftingInput, HolderLookup.Provider registries)`, and `getGroup()` in [`ProgressiveThermoPlantRecipe.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/pneumaticcraft/ProgressiveThermoPlantRecipe.java).
+  2. Removed the corrupt 0-byte file `src/main/resources/data/chronon_wand/recipe/chronon_accelerator.json` which was causing a `JsonParseException` (EOFException) on datapack reloads.
+  3. Copied `jei-1.21.1-neoforge-19.57.0.449.jar` into the `Chronon wand` instance mods directory (`E:\Games\PrismLauncher\instances\Chronon wand\minecraft\mods\`).
+  4. Built and deployed updated `chronon_wand-2.0.0.jar` to both `Chronon wand` and `All the Mods 10 Aeronautics`.
 
 ---
 
@@ -152,8 +177,10 @@
 
 ## 5. Next Steps & Potential Future Work
 
-1. **In-Game Testing**:
-   - Test cycling crystals through Mekanism Metallurgic Infuser, Mekanism Nucleosynthesizer, and PNC Thermo Plant with item pipes.
-   - Verify that progress bar and hover tooltip update smoothly on each cycle and transform when reaching target count.
-   - Test `enable_progression_recipes = false` in `chronon_wand-server.toml` to verify recipe disabling.
+1. **Restart Minecraft Instance**:
+   - The user must restart their Minecraft client so the newly added JEI mod is loaded into `Chronon wand`.
+   - On restart, EMI's JEMI bridge will automatically load PneumaticCraft's `JEIPlugin` and index the Thermopneumatic Processing Plant category and recipes.
+2. **In-Game Verification**:
+   - Verify that the Thermopneumatic Processing Plant category appears in EMI/JEI and shows the Antitime-Warped Crystal recipe.
+   - Verify multi-cycle automation with item pipes/hoppers.
 

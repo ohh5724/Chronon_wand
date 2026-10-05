@@ -12,19 +12,20 @@
   "inputs": {
     "fluid": {
       "amount": 2,
-      "id": "chronon_wand:antitime_fluid"
+      "fluid": "chronon_wand:antitime_fluid"
     },
     "item": {
       "item": "chronon_wand:chronon_infused_chronon_anticrystal"
     }
   },
   "outputs": {
-    "outputItem": {
+    "item_output": {
       "count": 1,
-      "id": "chronon_wand:chronon_infused_chronon_anticrystal"
+      "id": "chronon_wand:antitime_warped_chronon_infused_chronon_anticrystal"
     }
   },
   "temperature": {
+    "min": 0,
     "max": 100
   },
   "pressure": 0.0,
