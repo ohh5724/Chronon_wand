@@ -6,7 +6,7 @@
 - **Mod Name**: Chronon Wand
 - **Mod ID**: `chronon_wand`
 - **Environment**: NeoForge 21.1.228+ for Minecraft 1.21.1, Java 21
-- **Current Version**: `2.0.0` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
+- **Current Version**: `2.0.1` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
 - **Workspace Location**: `e:\Owen\Projects\Mods\Chronon_wand`
 - **Prism Launcher Test Instances**:
   1. `E:\Games\PrismLauncher\instances\Chronon wand\minecraft\`

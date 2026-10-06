@@ -102,6 +102,17 @@ public class ChrononAcceleratorBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        if (!level.isClientSide) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof ChrononAcceleratorBlockEntity accelerator) {
+                accelerator.invalidateConnectedMetronome();
+            }
+        }
+    }
+
+    @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) {
             return ItemInteractionResult.SUCCESS;

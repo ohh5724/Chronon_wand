@@ -101,18 +101,24 @@ public class ChrononAcceleratorBlockEntity extends BlockEntity implements IFluid
             if (this.level.getBlockEntity(adjacent) instanceof ChrononAcceleratorBlockEntity) {
                 continue;
             }
+            BlockEntity adjacentBe = this.level.getBlockEntity(adjacent);
+            if (adjacentBe instanceof MetronomeBe metronomeBe) {
+                if (metronomeBe.getBootTime() > 0) {
+                    continue;
+                }
+                if (this.owner == null && metronomeBe.getOwner() != null) {
+                    this.owner = metronomeBe.getOwner().getId();
+                    setChanged();
+                }
+            }
             ChrononHandler handler = this.level.getCapability(
                     ChrononHandler.Capabilities.getBlock(),
                     adjacent,
                     direction.getOpposite()
             );
             if (handler != null) {
-                if (this.owner == null) {
-                    BlockEntity adjacentBe = this.level.getBlockEntity(adjacent);
-                    if (adjacentBe instanceof MetronomeBe metronomeBe && metronomeBe.getOwner() != null) {
-                        this.owner = metronomeBe.getOwner().getId();
-                        setChanged();
-                    }
+                if (!handler.getCanExtract()) {
+                    continue;
                 }
                 this.cachedMetronome = handler;
                 return handler;
