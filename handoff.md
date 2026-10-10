@@ -184,3 +184,21 @@
    - Verify that the Thermopneumatic Processing Plant category appears in EMI/JEI and shows the Antitime-Warped Crystal recipe.
    - Verify multi-cycle automation with item pipes/hoppers.
 
+---
+
+## 6. Commitments & Workflow Constraints
+
+- **Semantic Versioning (SemVer 2.0.0)**:
+  - Format: `MAJOR.MINOR.PATCH` (e.g., `2.0.1`).
+  - Increment `PATCH` for backward-compatible bug fixes.
+  - Increment `MINOR` for new backward-compatible functionality / content.
+  - Increment `MAJOR` for breaking changes / incompatible architecture shifts.
+  - Keep `mod_version` in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties) and `handoff.md` synchronized whenever versioning changes.
+- **Git Commit Rules**:
+  - Automatically commit changes to git locally with the version number included in the commit message (e.g. `v2.0.1: <description>`).
+  - **DO NOT PUSH TO REMOTE**: Never execute `git push`.
+- **Instance Deployment Restrictions**:
+  - Strictly **DO NOT deploy** to `ATM10SKY Aeronautics` (`E:\Games\PrismLauncher\instances\ATM10SKY Aeronautics\minecraft\mods\`).
+  - Only deploy to `Chronon wand` and `All the Mods 10 Aeronautics`.
+
+
