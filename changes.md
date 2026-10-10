@@ -66,3 +66,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Full tier range of Applied Energistics 2 Chronon Storage Cells (1k to 256m).
 - Crop acceleration support with the Chronon Wand.
+

@@ -197,6 +197,7 @@
   - Keep `mod_version` in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties), [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md), and `handoff.md` synchronized whenever versioning changes.
 - **Keep a Changelog**:
   - Maintain [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md) following [Keep a Changelog](https://keepachangelog.com/) with `[Unreleased]` and versioned sections (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`).
+  - **Always commit `changes.md` with code changes**: Update [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md) whenever features, fixes, or tweaks are made, and stage/commit it alongside the corresponding code files in the same commit.
 - **Git Commit Rules**:
   - Automatically commit changes to git locally with the version number included in the commit message (e.g. `v2.0.1: <description>`).
   - **DO NOT PUSH TO REMOTE**: Never execute `git push`.
