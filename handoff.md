@@ -172,6 +172,7 @@
 | [`AE2TickHelper.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/AE2TickHelper.java) | Soft AE2 machine acceleration delegate |
 | [`AE2TickHandler.java`](file:///e:/Owen/Projects/Mods/Chronon_wand/src/main/java/com/ohh/chronon_wand/compat/ae2/AE2TickHandler.java) | Direct AE2 grid machine ticking implementation |
 | [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties) | Mod metadata & version tracking |
+| [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md) | Project changelog following Keep a Changelog standard |
 
 ---
 
@@ -193,7 +194,9 @@
   - Increment `PATCH` for backward-compatible bug fixes.
   - Increment `MINOR` for new backward-compatible functionality / content.
   - Increment `MAJOR` for breaking changes / incompatible architecture shifts.
-  - Keep `mod_version` in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties) and `handoff.md` synchronized whenever versioning changes.
+  - Keep `mod_version` in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties), [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md), and `handoff.md` synchronized whenever versioning changes.
+- **Keep a Changelog**:
+  - Maintain [`changes.md`](file:///e:/Owen/Projects/Mods/Chronon_wand/changes.md) following [Keep a Changelog](https://keepachangelog.com/) with `[Unreleased]` and versioned sections (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`).
 - **Git Commit Rules**:
   - Automatically commit changes to git locally with the version number included in the commit message (e.g. `v2.0.1: <description>`).
   - **DO NOT PUSH TO REMOTE**: Never execute `git push`.
