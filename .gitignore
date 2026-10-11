@@ -39,8 +39,6 @@ run/
 repo/
 !**/src/**/repo/
 *.code-workspace
-to_import/
-builds/
 
 ### Gimp Output ###
 *.xcf
