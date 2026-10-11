@@ -6,7 +6,7 @@
 - **Mod Name**: Chronon Wand
 - **Mod ID**: `chronon_wand`
 - **Environment**: NeoForge 21.1.228+ for Minecraft 1.21.1, Java 21
-- **Current Version**: `2.0.1` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
+- **Current Version**: `2.0.2` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
 - **Workspace Location**: `e:\Owen\Projects\Mods\Chronon_wand`
 - **Prism Launcher Test Instances**:
   1. `E:\Games\PrismLauncher\instances\Chronon wand\minecraft\`
@@ -148,6 +148,17 @@
   2. Removed the corrupt 0-byte file `src/main/resources/data/chronon_wand/recipe/chronon_accelerator.json` which was causing a `JsonParseException` (EOFException) on datapack reloads.
   3. Copied `jei-1.21.1-neoforge-19.57.0.449.jar` into the `Chronon wand` instance mods directory (`E:\Games\PrismLauncher\instances\Chronon wand\minecraft\mods\`).
   4. Built and deployed updated `chronon_wand-2.0.0.jar` to both `Chronon wand` and `All the Mods 10 Aeronautics`.
+
+### Milestone 8: Multi-Environment & Secondary PC Portability Fixes (v2.0.2)
+- **Root Cause**:
+  1. On secondary machines lacking an `E:` drive or with Prism Launcher in standard AppData (`C:\Users\<user>\AppData\Roaming\PrismLauncher\instances\Chronon_wand\minecraft\mods`), Gradle could not locate the hardcoded mod dependencies.
+  2. Deployment tasks (`copyJarToAtm10`, `copyJarToBuilds`) failed when target drives/directories did not exist on secondary machines.
+  3. The `Chronon_wand` Prism instance on the secondary PC was missing `ae2importexportcard-1.21.1-1.6.0.jar` and `architectury-13.0.11-neoforge.jar`.
+- **Fixes Applied**:
+  1. Updated `build.gradle` to dynamically detect the active Prism Launcher instance mods directory (`Chronon_wand` under AppData or `Chronon wand` under `E:`).
+  2. Added existence guards (`onlyIf`) to deployment tasks and fallback for `copyJarToBuilds` to local `./builds`.
+  3. Copied missing `ae2importexportcard` and `architectury` jars from the local `ATM10SKY` instance into `Chronon_wand\minecraft\mods`.
+  4. Verified full compilation passes with `BUILD SUCCESSFUL`.
 
 ---
 

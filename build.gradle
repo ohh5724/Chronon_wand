@@ -115,22 +115,34 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-dependencies {
-    implementation fileTree(dir: "E:/Games/PrismLauncher/instances/Chronon wand/minecraft/mods", include: [
-        "tempad-*.jar",
-        "cloth-config-*.jar",
-        "resourcefullib-*.jar",
-        "resourcefulconfig-*.jar",
-        "kotlinforforge-*.jar",
-        "architectury-*.jar",
-        "appliedenergistics2-*.jar",
-        "ae2importexportcard-*.jar"
-    ])
+// Dynamic Prism Launcher instance mods folder detection
+def roamingPrismDir = file("C:/Users/Owen/AppData/Roaming/PrismLauncher/instances/Chronon_wand/minecraft/mods")
+def ePrismDir = file("E:/Games/PrismLauncher/instances/Chronon wand/minecraft/mods")
+def prismModsDir = roamingPrismDir.exists() ? roamingPrismDir : (ePrismDir.exists() ? ePrismDir : roamingPrismDir)
 
-    compileOnly fileTree(dir: "E:/Games/PrismLauncher/instances/Chronon wand/minecraft/mods", include: [
-        "Mekanism-*.jar",
-        "pneumaticcraft-*.jar"
-    ])
+def activeModsDirs = [roamingPrismDir, ePrismDir].findAll { it.exists() }
+if (activeModsDirs.isEmpty()) {
+    activeModsDirs = [prismModsDir]
+}
+
+dependencies {
+    activeModsDirs.each { modsDir ->
+        implementation fileTree(dir: modsDir, include: [
+            "tempad-*.jar",
+            "cloth-config-*.jar",
+            "resourcefullib-*.jar",
+            "resourcefulconfig-*.jar",
+            "kotlinforforge-*.jar",
+            "architectury-*.jar",
+            "appliedenergistics2-*.jar",
+            "ae2importexportcard-*.jar"
+        ])
+
+        compileOnly fileTree(dir: modsDir, include: [
+            "Mekanism-*.jar",
+            "pneumaticcraft-*.jar"
+        ])
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -187,13 +199,14 @@ idea {
     }
 }
 
-// Define the destination path for your Prism Launcher instance mods folder
-def prismModsDir = file("E:\\Games\\PrismLauncher\\instances\\Chronon wand\\minecraft\\mods")
+// The destination path for your Prism Launcher instance mods folder uses dynamic prismModsDir defined above
 def modId = mod_id
 
 tasks.register('copyJarToPrism', Copy) {
     group = 'mod development'
     description = 'Copies the compiled mod JAR to the Prism Launcher instance mods folder.'
+
+    onlyIf { prismModsDir.exists() }
 
     // Always execute copy
     outputs.upToDateWhen { false }
@@ -225,6 +238,8 @@ tasks.register('copyJarToAtm10', Copy) {
     group = 'mod development'
     description = 'Copies the compiled mod JAR to the ATM10 Aeronautics instance mods folder.'
 
+    onlyIf { atm10ModsDir.exists() }
+
     // Always execute copy
     outputs.upToDateWhen { false }
 
@@ -249,7 +264,9 @@ tasks.named('build') {
 }
 
 
-def BuildsDir = file("E:\\Owen\\Projects\\Mods\\Chronon_wand\\builds")
+def localBuildsDir = file("${project.projectDir}/builds")
+def eBuildsDir = file("E:\\Owen\\Projects\\Mods\\Chronon_wand\\builds")
+def BuildsDir = (eBuildsDir.parentFile?.exists() && eBuildsDir.exists()) ? eBuildsDir : localBuildsDir
 
 tasks.register('copyJarToBuilds', Copy) {
     group = 'mod development'

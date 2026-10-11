@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.1] - 2026-10-06
+## [2.0.2] - 2026-10-11
+
+### Fixed
+- Fixed build and dependency resolution failure on secondary machines lacking an `E:` drive by dynamically detecting the active Prism Launcher instance mods directory (`Chronon_wand` under AppData or `Chronon wand` under `E:`).
+- Added existence guards (`onlyIf`) to instance deployment tasks (`copyJarToPrism`, `copyJarToAtm10`) to prevent missing directory/drive build failures on secondary machines.
+- Added fallback for `copyJarToBuilds` to local `./builds` when the `E:` drive is unavailable.
+
 
 ### Added
 - Immediate neighbor update invalidation (`neighborChanged`) in `ChrononAcceleratorBlock` to refresh connected Metronome capability caches instantly on block placement or removal.
