@@ -6,7 +6,7 @@
 - **Mod Name**: Chronon Wand
 - **Mod ID**: `chronon_wand`
 - **Environment**: NeoForge 21.1.228+ for Minecraft 1.21.1, Java 21
-- **Current Version**: `2.0.2` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
+- **Current Version**: `2.1.0` (defined in [`gradle.properties`](file:///e:/Owen/Projects/Mods/Chronon_wand/gradle.properties))
 - **Workspace Location**: `e:\Owen\Projects\Mods\Chronon_wand`
 - **Prism Launcher Test Instances**:
   1. `E:\Games\PrismLauncher\instances\Chronon wand\minecraft\`
@@ -159,6 +159,13 @@
   2. Added existence guards (`onlyIf`) to deployment tasks and fallback for `copyJarToBuilds` to local `./builds`.
   3. Copied missing `ae2importexportcard` and `architectury` jars from the local `ATM10SKY` instance into `Chronon_wand\minecraft\mods`.
   4. Verified full compilation passes with `BUILD SUCCESSFUL`.
+
+### Milestone 9: 3D Chronon Wand OBJ Model Integration (v2.1.0)
+- **Feature**:
+  1. Integrated custom 3D Wavefront OBJ model (`chronon_wand.obj` and `chronon_wand.mtl`) for the Chronon Wand item using NeoForge's built-in `neoforge:obj` model loader with `"flip_v": true`.
+  2. Created 32x32 texture mapping (`chronon_wand.png`).
+  3. Added display transformations for `thirdperson_righthand`, `thirdperson_lefthand`, `firstperson_righthand`, `firstperson_lefthand`, `gui`, `ground`, and `fixed`.
+  4. Verified clean compilation and successful artifact deployment.
 
 ---
 

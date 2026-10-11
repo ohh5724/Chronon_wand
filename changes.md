@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-11
+
+### Added
+- Integrated custom 3D Wavefront OBJ model (`chronon_wand.obj` and `chronon_wand.mtl`) for the Chronon Wand item using NeoForge's built-in `neoforge:obj` model loader with `flip_v: true`.
+- Added first-person, third-person, ground, and GUI slot diagonal display transformations in `chronon_wand.json`.
+- Updated Chronon Wand texture to 32x32 resolution matching the new 3D model mapping.
+
 ## [2.0.2] - 2026-10-11
 
 ### Fixed
