@@ -1,0 +1,12 @@
+{
+    "C":"JDT time crystal",
+    "V":"ae2 vibrant quartz glass",
+    "S":"tempad time steel",
+    "G":"whatever storage component",
+
+    "recipie":[
+        "V","C","V",
+        "C","G","C",
+        "S","S","S"
+    ]
+}
