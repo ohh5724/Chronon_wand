@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-10-21
+
+### Changed
+- Updated the Chronon Wand 3D Wavefront OBJ model geometry and material bindings.
+- Updated source model assets in `to_import/models/` and `to_import/textures/`.
+
 ## [2.1.0] - 2026-10-11
 
 ### Added
