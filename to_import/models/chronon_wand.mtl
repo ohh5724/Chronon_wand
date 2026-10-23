@@ -1,4 +1,6 @@
 # Made in Blockbench 5.2.2
 newmtl m_c9ad9455-a32e-e4ca-5801-ecbb07c59df1
-map_Kd wand_temp_texture.png
+map_Kd chronon_wand:item/chronon_wand
+
 newmtl none
+map_Kd chronon_wand:item/chronon_wand

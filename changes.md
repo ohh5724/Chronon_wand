@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-10-23
+
+### Fixed
+- Fixed missing texture on the 3D Chronon Wand model caused by Blockbench `.mtl` export defaulting to `wand_temp_texture.png`; properly mapped texture to `chronon_wand:item/chronon_wand`.
+
+### Changed
+- Updated Chronon Wand 3D model geometry and work-in-progress Blockbench project files.
+
 ## [2.1.1] - 2026-10-21
 
 ### Changed
