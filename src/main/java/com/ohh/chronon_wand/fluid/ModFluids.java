@@ -43,7 +43,7 @@ public class ModFluids {
             FluidType.Properties.create()
                     .density(2000)
                     .viscosity(2000)
-                    .temperature(1)
+                    .temperature(-727)
                     .lightLevel(5)
                     .descriptionId("fluid_type.chronon_wand.antitime_fluid")
     ));

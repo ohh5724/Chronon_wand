@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.3] - 2026-11-01
+
+### Changed
+- Updated Antitime fluid temperature to -727 K.
+- Updated operating temperature range in the PneumaticCraft Thermopneumatic Processing Plant recipe for `antitime_warped_chronon_infused_chronon_anticrystal` to -750 K to -700 K.
+
 ## [2.1.2] - 2026-10-23
 
 ### Fixed
