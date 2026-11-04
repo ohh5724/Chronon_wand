@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.4] - 2026-11-04
+
+### Changed
+- Updated mod license to LGPL-3.0 for source code and All Rights Reserved for assets.
+- Ignored scripts directory in `.gitignore`.
+
+### Removed
+- Removed default template `README.md`.
+
 ## [2.1.3] - 2026-11-01
 
 ### Changed

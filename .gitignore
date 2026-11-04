@@ -43,3 +43,9 @@ repo/
 ### Gimp Output ###
 *.xcf
 gimp_output/
+
+
+
+
+### Excluded Files/Folders ###
+scripts/
